@@ -7,11 +7,12 @@ export default [
     config: {
       enabled: true,
       origin: [
+        "*",
         "http://localhost:3000",
         "https://aggksok0ogk0k04gck08wkgs.cool.dynamicbusiness.com/",
       ],
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-      headers: ["Content-Type", "Authorization"],
+      headers: ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
     },
   },
   "strapi::poweredBy",

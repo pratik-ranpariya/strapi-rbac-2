@@ -1,0 +1,12 @@
+{
+  "name": "submissions",
+  "version": "1.0.0",
+  "strapi": {
+    "name": "submissions",
+    "description": "Submissions plugin",
+    "kind": "plugin"
+  },
+  "dependencies": {
+    "@strapi/strapi": "^5.8.1"
+  }
+}

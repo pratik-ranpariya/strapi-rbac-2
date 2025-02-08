@@ -16,6 +16,7 @@
     "@strapi/plugin-cloud": "5.8.1",
     "@strapi/plugin-users-permissions": "5.8.1",
     "@strapi/strapi": "5.8.1",
+    "axios": "^1.7.9",
     "fs-extra": "^10.0.0",
     "mime-types": "^2.1.27",
     "pg": "8.8.0",

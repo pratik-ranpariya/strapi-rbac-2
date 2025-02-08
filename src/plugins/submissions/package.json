@@ -1,12 +1,10 @@
 {
-  "name": "submissions",
+  "name": "strapi-plugin-submissions",
   "version": "1.0.0",
+  "description": "A plugin for managing submissions",
   "strapi": {
     "name": "submissions",
-    "description": "Submissions plugin",
+    "description": "A plugin for managing submissions",
     "kind": "plugin"
-  },
-  "dependencies": {
-    "@strapi/strapi": "^5.8.1"
   }
 }

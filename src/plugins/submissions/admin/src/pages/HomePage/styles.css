@@ -1,0 +1,27 @@
+.submissions-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.submissions-subnav {
+  background-color: #f6f6f9;
+  border-right: 1px solid #dcdce4;
+  min-width: 220px;
+}
+
+.submissions-main {
+  flex: 1;
+  background-color: #ffffff;
+}
+
+.submissions-header {
+  margin-bottom: 24px;
+}
+
+.submissions-content {
+  padding: 32px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(33, 33, 52, 0.1);
+} 

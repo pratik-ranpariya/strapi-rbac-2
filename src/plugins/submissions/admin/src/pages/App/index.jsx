@@ -7,7 +7,7 @@ import Editors from "../Editors";
 
 const App = () => {
   return (
-    <Switch>
+    <Routes>
       <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
       <Route
         path={`/plugins/${pluginId}/contributors`}
@@ -15,7 +15,7 @@ const App = () => {
         exact
       />
       <Route path={`/plugins/${pluginId}/editors`} component={Editors} exact />
-    </Switch>
+    </Routes>
   );
 };
 

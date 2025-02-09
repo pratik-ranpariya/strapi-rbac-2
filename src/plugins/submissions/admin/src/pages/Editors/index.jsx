@@ -161,7 +161,7 @@ const EditorsPage = () => {
         Editors Panel
       </Typography>
       <Box padding={8} background="neutral100">
-        <Table colCount={4} rowCount={articles.length}>
+        <Table colCount={6} rowCount={articles.length}>
           <Thead>
             <Tr>
               <Th>

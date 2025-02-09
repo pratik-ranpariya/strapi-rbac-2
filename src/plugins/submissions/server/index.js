@@ -13,11 +13,4 @@ module.exports = ({ strapi }) => ({
   config: {
     // Plugin configuration
   },
-  controllers: {
-    myController: require("./controllers/my-controller")({ strapi }),
-  },
-  routes: require("./routes"),
-  services: {
-    myService: require("./services/my-service")({ strapi }),
-  },
 });

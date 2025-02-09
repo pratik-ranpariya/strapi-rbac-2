@@ -1,7 +1,9 @@
 "use strict";
 
-module.exports = ({ strapi }) => ({
-  getWelcomeMessage() {
-    return "Welcome to Submissions";
+module.exports = {
+  async getSubmissions() {
+    return await strapi.entityService.findMany("api::article.article", {
+      populate: ["author"],
+    });
   },
-});
+};

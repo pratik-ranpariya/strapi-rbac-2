@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   Thead,
@@ -97,6 +97,32 @@ const ContributorsPage = () => {
       status: "Approved",
     },
   ];
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:1337/plugins/submissions/getArticles",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch articles");
+        }
+
+        const data = await response.json();
+        console.log("Articles:", data);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -183,7 +209,7 @@ const ContributorsPage = () => {
         Contributor Article Management
       </Typography>
       <Box padding={8} background="neutral100">
-        <Table colCount={5} rowCount={articles.length}>
+        <Table colCount={6} rowCount={articles.length}>
           <Thead>
             <Tr>
               <Th>
@@ -194,6 +220,9 @@ const ContributorsPage = () => {
               </Th>
               <Th>
                 <Typography variant="sigma">Description</Typography>
+              </Th>
+              <Th>
+                <Typography variant="sigma">Slug</Typography>
               </Th>
               <Th>
                 <Typography variant="sigma">Status</Typography>
@@ -218,6 +247,9 @@ const ContributorsPage = () => {
                   <Typography textColor="neutral800">
                     {article.description}
                   </Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{article.slug}</Typography>
                 </Td>
                 <Td>
                   <Badge variant={getStatusColor(article.status)}>

@@ -1,6 +1,6 @@
 export default {
-  submissions: {
+  submissions2: {
     enabled: true,
-    resolve: "./src/plugins/submissions",
+    resolve: "./src/plugins/submissions2",
   },
 };

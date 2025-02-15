@@ -27,7 +27,7 @@
     "articles": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::article.article",
+      "target": "plugin::submissions2.article",
       "mappedBy": "author"
     }
   }

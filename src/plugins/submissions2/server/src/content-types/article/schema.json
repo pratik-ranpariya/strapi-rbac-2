@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "articles",
+  "info": {
+    "singularName": "article",
+    "pluralName": "articles",
+    "displayName": "Article",
+    "description": "Create your blog content"
+  },
+
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    }
+  },
+
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 80
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos"]
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "articles"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "articles"
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": ["shared.media", "shared.quote", "shared.rich-text", "shared.slider"]
+    },
+    "submissionStatus": {
+      "type": "enumeration",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending",
+      "description": "The current status of the submission"
+    },
+    "approvalComments": {
+      "type": "text",
+      "required": false,
+      "description": "Comments from the approver regarding the submission"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "description": "The user who approved the submission"
+    },
+    "approvalDate": {
+      "type": "date",
+      "required": false,
+      "description": "The date when the submission was approved"
+    }
+  }
+}

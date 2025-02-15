@@ -9,7 +9,8 @@
     "develop": "strapi develop",
     "seed:example": "node ./scripts/seed.js",
     "start": "strapi start",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "dev": "strapi build && strapi develop --watch-admin"
   },
   "dependencies": {
     "@strapi/helper-plugin": "^5.0.0-alpha.2",

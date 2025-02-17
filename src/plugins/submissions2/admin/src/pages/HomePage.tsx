@@ -1,9 +1,33 @@
 import React from 'react';
-import { Box, Typography } from '@strapi/design-system';
+import { Box, Typography, Flex } from '@strapi/design-system';
 import { NavLink, useLocation } from 'react-router-dom';
 import { PLUGIN_ID } from '../pluginId';
 import Contributors from '../components/Contributors/index.js';
 import Editors from '../components/Editors/index.js';
+import styled from 'styled-components';
+
+const StyledNavLink = styled(NavLink)`
+  padding: 5px 20px;
+  font-size: 1.33rem;
+  transition: all 0.2s ease;
+  background: white;
+  border: 1px solid currentcolor;
+  border-radius: 4px;
+  text-decoration: none;
+  color: currentcolor;
+  display: inline-block;
+  cursor: pointer;
+
+  &:hover {
+    background: #4945FF;
+    color: white;
+  }
+
+  &.active {
+    background: #4945FF;
+    color: white;
+  }
+`;
 
 const HomePage = () => {
   const location = useLocation();
@@ -36,32 +60,20 @@ const HomePage = () => {
 
       <Box paddingBottom={4}>
         <nav>
-          <Box paddingBottom={2}>
-            <NavLink
+          <Flex gap={4}>
+            <StyledNavLink
               to={`/plugins/${PLUGIN_ID}/contributors`}
-              style={({ isActive }) => ({
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: '#4945FF',
-                textDecoration: 'none',
-                marginRight: '16px',
-                fontSize: '18px',
-              })}
+              className={({ isActive }) => isActive ? 'active' : ''}
             >
               Contributors
-            </NavLink>
-            <NavLink
+            </StyledNavLink>
+            <StyledNavLink
               to={`/plugins/${PLUGIN_ID}/editors`}
-              style={({ isActive }) => ({
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: '#4945FF',
-                textDecoration: 'none',
-                marginRight: '16px',
-                fontSize: '18px',
-              })}
+              className={({ isActive }) => isActive ? 'active' : ''}
             >
               Editors
-            </NavLink>
-          </Box>
+            </StyledNavLink>
+          </Flex>
         </nav>
       </Box>
 

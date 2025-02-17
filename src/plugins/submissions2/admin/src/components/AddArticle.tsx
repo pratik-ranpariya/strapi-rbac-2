@@ -8,8 +8,30 @@ import {
   Typography,
   SingleSelect,
   SingleSelectOption,
+  Flex,
 } from '@strapi/design-system';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+const FormBox = styled(Box)`
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(33, 33, 52, 0.1);
+  padding: 24px;
+`;
+
+const FieldLabel = styled(Typography)`
+  color: #32324d;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+`;
+
+const FieldHint = styled(Typography)`
+  color: #666687;
+  font-size: 0.75rem;
+  margin-top: 4px;
+`;
 
 const AddArticle = () => {
   const [title, setTitle] = useState('');
@@ -85,85 +107,99 @@ const AddArticle = () => {
 
   return (
     <Box padding={8} background="neutral100">
-      <Typography variant="alpha" fontWeight="bold" marginBottom={6}>
+      <Typography variant="alpha" fontWeight="bold" marginBottom={10}>
         Add New Article
       </Typography>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <Box marginBottom={4}>
-          <TextInput
-            label="Title"
-            value={title}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-            required
-          />
-        </Box>
-        <Box marginBottom={4}>
-          <Textarea
-            label="Description"
-            value={description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
-            required
-          />
-        </Box>
-        <Box marginBottom={4}>
-          <SingleSelect
-            label="Author"
-            value={author}
-            onChange={(value: string) => setAuthor(value)}
-            required
-          >
-            <SingleSelectOption value="" disabled>
-              Select an Author
-            </SingleSelectOption>
-            {authors && authors.length > 0 ? (
-              authors.map((author: any) => (
-                <SingleSelectOption key={author.id} value={author.id}>
-                  {author.name}
-                </SingleSelectOption>
-              ))
-            ) : (
+      <FormBox>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <Box marginBottom={4} marginTop={5}>
+            <FieldLabel>Title</FieldLabel>
+            <TextInput
+              placeholder="Enter the title of your article"
+              value={title}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+              required
+            />
+            <FieldHint>A clear and descriptive title for your article</FieldHint>
+          </Box>
+          <Box marginBottom={4}>
+            <FieldLabel>Description</FieldLabel>
+            <Textarea
+              placeholder="Write a detailed description of your article"
+              value={description}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+              required
+              style={{ minHeight: '120px' }}
+            />
+            <FieldHint>Provide a comprehensive description of your article's content</FieldHint>
+          </Box>
+          <Box marginBottom={4}>
+            <FieldLabel>Author</FieldLabel>
+            <SingleSelect
+              placeholder="Choose an author"
+              value={author}
+              onChange={(value: string) => setAuthor(value)}
+              required
+            >
               <SingleSelectOption value="" disabled>
-                No authors found
+                Select an Author
               </SingleSelectOption>
-            )}
-          </SingleSelect>
-        </Box>
-        <Box marginBottom={4}>
-          <SingleSelect
-            label="Category"
-            value={category}
-            onChange={(value: string) => setCategory(value)}
-            required
-          >
-            <SingleSelectOption value="" disabled>
-              Select a Category
-            </SingleSelectOption>
-            {categories && categories.length > 0 ? (
-              categories.map((category: any) => (
-                <SingleSelectOption key={category.id} value={category.id}>
-                  {category.name}
+              {authors && authors.length > 0 ? (
+                authors.map((author: any) => (
+                  <SingleSelectOption key={author.id} value={author.id}>
+                    {author.name}
+                  </SingleSelectOption>
+                ))
+              ) : (
+                <SingleSelectOption value="" disabled>
+                  No authors found
                 </SingleSelectOption>
-              ))
-            ) : (
+              )}
+            </SingleSelect>
+            <FieldHint>Select the author of this article</FieldHint>
+          </Box>
+          <Box marginBottom={4}>
+            <FieldLabel>Category</FieldLabel>
+            <SingleSelect
+              placeholder="Choose a category"
+              value={category}
+              onChange={(value: string) => setCategory(value)}
+              required
+            >
               <SingleSelectOption value="" disabled>
-                No categories found
+                Select a Category
               </SingleSelectOption>
-            )}
-          </SingleSelect>
-        </Box>
-        <Box marginTop={4}>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, true)}
-          >
-            Save as Draft
-          </Button>
-          <Button type="submit" variant="success" style={{ marginLeft: '10px' }}>
-            Submit
-          </Button>
-        </Box>
-      </form>
+              {categories && categories.length > 0 ? (
+                categories.map((category: any) => (
+                  <SingleSelectOption key={category.id} value={category.id}>
+                    {category.name}
+                  </SingleSelectOption>
+                ))
+              ) : (
+                <SingleSelectOption value="" disabled>
+                  No categories found
+                </SingleSelectOption>
+              )}
+            </SingleSelect>
+            <FieldHint>Select the most appropriate category for your article</FieldHint>
+          </Box>
+          <Flex gap={4} justifyContent="flex-end" paddingTop={4}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, true)}
+            >
+              Save as Draft
+            </Button>
+            <Button 
+              type="submit" 
+              variant="success"
+            >
+              Submit
+            </Button>
+          </Flex>
+        </form>
+      </FormBox>
     </Box>
   );
 };

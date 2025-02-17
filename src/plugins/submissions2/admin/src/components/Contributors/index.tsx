@@ -12,45 +12,74 @@ import {
   Badge,
   Box,
   Button,
+  Loader,
 } from '@strapi/design-system';
-import { Upload, Cross, Trash, ArrowDown } from '@strapi/icons';
+import { Upload, Cross, Trash, ArrowDown, Plus } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import TooltipIconButton from '../TooltipIconButton';
+import { LinkButton } from '@strapi/design-system';
+import { FormattedMessage } from 'react-intl';
+
+interface Article {
+  id: number;
+  title: string;
+  description: string;
+  author: string;
+  category: string;
+  status: 'published' | 'draft' | 'pending';
+  createdAt: string;
+  submissionStatus?: 'draft' | 'submitted' | 'approved';
+}
 
 const ContributorsPage = () => {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Sample dummy data
+  const dummyArticles: Article[] = [
+    {
+      id: 1,
+      title: "Getting Started with Strapi",
+      description: "A comprehensive guide to building your first Strapi application",
+      author: "John Doe",
+      category: "Tutorials",
+      status: "published",
+      createdAt: "2024-03-15T10:00:00.000Z",
+      submissionStatus: "approved"
+    },
+    {
+      id: 2,
+      title: "Advanced Strapi Plugins",
+      description: "Learn how to create custom plugins in Strapi",
+      author: "Jane Smith",
+      category: "Development",
+      status: "draft",
+      createdAt: "2024-03-14T15:30:00.000Z",
+      submissionStatus: "draft"
+    },
+    {
+      id: 3,
+      title: "Content Modeling Best Practices",
+      description: "Tips and tricks for effective content modeling in Strapi",
+      author: "Mike Johnson",
+      category: "Best Practices",
+      status: "pending",
+      createdAt: "2024-03-13T09:45:00.000Z",
+      submissionStatus: "submitted"
+    }
+  ];
+
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await fetch('/submissions2/editors/allArticles', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch articles');
-        }
-
-        const data = await response.json();
-        setArticles(data);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
+    // Simulate API call with dummy data
+    setTimeout(() => {
+      setArticles(dummyArticles);
+      setLoading(false);
+    }, 1000);
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: Article['status'] | Article['submissionStatus']) => {
     switch (status?.toLowerCase()) {
       case 'approved':
         return 'success';
@@ -63,19 +92,19 @@ const ContributorsPage = () => {
     }
   };
 
-  const handleSubmit = (id: string) => {
+  const handleSubmit = (id: number) => {
     console.log('Submit article:', id);
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = (id: number) => {
     console.log('Cancel article:', id);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     console.log('Delete article:', id);
   };
 
-  const renderActionButtons = (article: any) => {
+  const renderActionButtons = (article: Article) => {
     switch (article?.submissionStatus?.toLowerCase()) {
       case 'draft':
         return (
@@ -135,89 +164,81 @@ const ContributorsPage = () => {
         <Typography variant="alpha" fontWeight="bold" margin={6}>
           Contributor Articles
         </Typography>
-        <Button variant="primary" onClick={() => navigate('/plugins/submissions2/add-article')}>
+        <LinkButton
+          onClick={() => navigate('/plugins/submissions2/add-article')}
+          startIcon={<Plus />}
+          size="S"
+        >
           Add Article
-        </Button>
+        </LinkButton>
       </Flex>
 
       <Box padding={8} background="neutral100">
         {loading ? (
-          <Typography>Loading...</Typography>
+          <Flex justifyContent="center" alignItems="flex-start" padding={6}>
+            <Loader>Loading content...</Loader>
+          </Flex>
         ) : (
-          <Table colCount={5} rowCount={articles.length}>
+          <Table colCount={6} rowCount={articles.length}>
             <Thead>
               <Tr>
                 <Th>
-                  <Typography variant="sigma">ID</Typography>
+                  <Typography variant="sigma">Title</Typography>
                 </Th>
                 <Th>
-                  <Typography variant="sigma">Title</Typography>
+                  <Typography variant="sigma">Description</Typography>
                 </Th>
                 <Th>
                   <Typography variant="sigma">Author</Typography>
                 </Th>
                 <Th>
-                  <Typography variant="sigma">Categories</Typography>
+                  <Typography variant="sigma">Category</Typography>
                 </Th>
                 <Th>
                   <Typography variant="sigma">Status</Typography>
                 </Th>
                 <Th>
-                  <Typography variant="sigma">Actions</Typography>
+                  <Typography variant="sigma">Created At</Typography>
                 </Th>
               </Tr>
             </Thead>
             <Tbody>
-              {articles.map((article: any) => (
+              {articles.map((article: Article) => (
                 <Tr key={article.id}>
-                  <Td>
-                    <Typography textColor="neutral800">{article.id}</Typography>
-                  </Td>
                   <Td>
                     <Typography textColor="neutral800">{article.title}</Typography>
                   </Td>
                   <Td>
-                    <Typography textColor="neutral800">{article.author?.name}</Typography>
+                    <Typography textColor="neutral800">
+                      {article.description.length > 50 
+                        ? `${article.description.substring(0, 50)}...` 
+                        : article.description}
+                    </Typography>
                   </Td>
                   <Td>
-                    <Typography textColor="neutral800">{article.category?.name}</Typography>
+                    <Typography textColor="neutral800">{article.author}</Typography>
                   </Td>
                   <Td>
-                    <Badge variant={getStatusColor(article.submissionStatus)}>
-                      {article.submissionStatus || 'Draft'}
-                    </Badge>
+                    <Typography textColor="neutral800">{article.category}</Typography>
                   </Td>
                   <Td>
-                    <Flex gap={2}>
-                      <TooltipIconButton
-                        variant="success"
-                        disabled={false}
-                        onClick={() => handleDelete(article.id)}
-                        label={'Submit'}
-                        showBorder={true}
-                      >
-                        <Upload />
-                      </TooltipIconButton>
-
-                      <TooltipIconButton
-                        variant="danger"
-                        disabled={false}
-                        onClick={() => handleDelete(article.id)}
-                        label={'Submit'}
-                        showBorder={true}
-                      >
-                        <Cross />
-                      </TooltipIconButton>
-                      <TooltipIconButton
-                        variant="danger"
-                        disabled={false}
-                        onClick={() => handleDelete(article.id)}
-                        label={'Trash'}
-                        showBorder={true}
-                      >
-                        <Trash />
-                      </TooltipIconButton>
-                    </Flex>
+                    <Typography
+                      textColor={
+                        article.status === 'published' 
+                          ? 'success600' 
+                          : article.status === 'draft' 
+                            ? 'neutral600' 
+                            : 'warning600'
+                      }
+                      fontWeight="bold"
+                    >
+                      {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
+                    </Typography>
+                  </Td>
+                  <Td>
+                    <Typography textColor="neutral800">
+                      {new Date(article.createdAt).toLocaleDateString()}
+                    </Typography>
                   </Td>
                 </Tr>
               ))}

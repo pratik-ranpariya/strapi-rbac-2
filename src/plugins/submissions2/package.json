@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "strapi-plugin build",
-    "watch": "strapi-plugin watch",
+    "develop": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
     "test:ts:front": "run -T tsc -p admin/tsconfig.json",
@@ -61,10 +61,16 @@
     "kind": "plugin",
     "name": "submissions2",
     "displayName": "Submissions",
-    "description": "POC for submissions and Approval amongst Editors and Contributers"
+    "description": "POC for submissions and Approval amongst Editors and Contributers",
+    "watch": {
+      "admin": true,
+      "server": true,
+      "development": true
+    }
   },
   "name": "submissions2",
   "description": "POC for submissions and Approval amongst Editors and Contributers",
   "license": "MIT",
-  "author": "Pratik-dev <pratikranpariya007@gmail.com>"
+  "author": "Pratik-dev <pratikranpariya007@gmail.com>",
+  "main": "index.js"
 }

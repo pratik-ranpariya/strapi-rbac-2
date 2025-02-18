@@ -1,17 +1,20 @@
 import { Core } from '@strapi/strapi';
 
-const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
+const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
   // Get all articles
   const index = async (ctx) => {
-    ctx.body = await strapi.plugin('submissions2').service('editorService').getEditorsArticles();
+    ctx.body = await strapi
+      .plugin('submissions2')
+      .service('contributerService')
+      .getContributersArticles();
   };
 
   // Find all articles with query
   const find = async (ctx) => {
     ctx.body = await strapi
       .plugin('submissions2')
-      .service('editorService')
-      .getAllEditorsArticles(ctx.query);
+      .service('contributerService')
+      .getAllContributersArticles(ctx.query);
   };
 
   // Submit a new article
@@ -19,7 +22,7 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
     const { title, description, author, category, cover, submissionStatus } = ctx.request.body;
     const newArticle = await strapi
       .plugin('submissions2')
-      .service('editorService')
+      .service('contributerService')
       .createArticle({
         title,
         description,
@@ -34,7 +37,10 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
   // Get a specific submission by ID
   const getSubmission = async (ctx) => {
     const { id } = ctx.params;
-    const article = await strapi.plugin('submissions2').service('editorService').getArticleById(id);
+    const article = await strapi
+      .plugin('submissions2')
+      .service('contributerService')
+      .getArticleById(id);
     if (!article) {
       return ctx.throw(404, 'Article not found');
     }
@@ -44,12 +50,13 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
   // Approve a submission
   const approveSubmission = async (ctx) => {
     const { id } = ctx.params;
-    const { approvalComments } = ctx.request.body;
+    const { approvedBy, approvalComments } = ctx.request.body;
     const updatedArticle = await strapi
       .plugin('submissions2')
-      .service('editorService')
+      .service('contributerService')
       .updateArticle(id, {
         submissionStatus: 'approved',
+        approvedBy,
         approvalComments,
         approvalDate: new Date(),
       });
@@ -62,7 +69,7 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
     const { approvalComments } = ctx.request.body;
     const updatedArticle = await strapi
       .plugin('submissions2')
-      .service('editorService')
+      .service('contributerService')
       .updateArticle(id, {
         submissionStatus: 'rejected',
         approvalComments,
@@ -75,7 +82,7 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
     const { id } = ctx.params;
     const deletedArticle = await strapi
       .plugin('submissions2')
-      .service('editorService')
+      .service('contributerService')
       .deleteArticle(id);
     if (!deletedArticle) {
       return ctx.throw(404, 'Article not found');
@@ -94,4 +101,4 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
   };
 };
 
-export default editorController;
+export default contributerController;

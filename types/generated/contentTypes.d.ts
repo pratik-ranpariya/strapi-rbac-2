@@ -782,9 +782,9 @@ export interface PluginSubmissions2Article extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
     submissionStatus: Schema.Attribute.Enumeration<
-      ['pending', 'approved', 'rejected']
+      ['draft', 'submitted', 'pending_approval', 'approved', 'rejected']
     > &
-      Schema.Attribute.DefaultTo<'pending'>;
+      Schema.Attribute.DefaultTo<'draft'>;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

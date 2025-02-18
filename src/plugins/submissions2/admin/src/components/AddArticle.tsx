@@ -52,8 +52,8 @@ const AddArticle = () => {
         };
 
         const [authorsResponse, categoriesResponse] = await Promise.all([
-          fetch('/api/users', { method: 'GET', headers }),
-          fetch('/api/categories', { method: 'GET', headers }),
+          fetch('/submissions2/authors', { method: 'GET', headers }),
+          fetch('/submissions2/categories', { method: 'GET', headers }),
         ]);
 
         setAuthors(await authorsResponse.json());
@@ -78,7 +78,7 @@ const AddArticle = () => {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem('jwtToken');
-      const response = await fetch('/submissions2/editors/articles/submit', {
+      const response = await fetch('/submissions2/contributers/articles/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,12 +89,12 @@ const AddArticle = () => {
           description,
           author,
           category,
-          submissionStatus: isDraft ? 'draft' : 'pending',
+          submissionStatus: isDraft ? 'draft' : 'submitted',
         }),
       });
 
       if (!response.ok) throw new Error('Failed to create article');
-      navigate('/contributors');
+      navigate('/plugins/submissions2/contributors');
     } catch (error) {
       console.error('Error creating article:', error);
     }
@@ -127,7 +127,9 @@ const AddArticle = () => {
             <Textarea
               placeholder="Write a detailed description of your article"
               value={description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setDescription(e.target.value)
+              }
               required
               style={{ minHeight: '120px' }}
             />
@@ -191,10 +193,7 @@ const AddArticle = () => {
             >
               Save as Draft
             </Button>
-            <Button 
-              type="submit" 
-              variant="success"
-            >
+            <Button type="submit" variant="success">
               Submit
             </Button>
           </Flex>

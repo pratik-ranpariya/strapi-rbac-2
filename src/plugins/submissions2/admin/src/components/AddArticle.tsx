@@ -9,6 +9,7 @@ import {
   SingleSelect,
   SingleSelectOption,
   Flex,
+  Loader,
 } from '@strapi/design-system';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -33,6 +34,13 @@ const FieldHint = styled(Typography)`
   margin-top: 4px;
 `;
 
+const StyledButton = styled(Button)`
+  min-width: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const AddArticle = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,6 +48,8 @@ const AddArticle = () => {
   const [category, setCategory] = useState('');
   const [authors, setAuthors] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,6 +87,12 @@ const AddArticle = () => {
   ) => {
     e.preventDefault();
     try {
+      if (isDraft) {
+        setIsSavingDraft(true);
+      } else {
+        setIsSubmitting(true);
+      }
+
       const token = sessionStorage.getItem('jwtToken');
       const response = await fetch('/submissions2/contributers/articles/submit', {
         method: 'POST',
@@ -96,7 +112,11 @@ const AddArticle = () => {
       if (!response.ok) throw new Error('Failed to create article');
       navigate('/plugins/submissions2/contributors');
     } catch (error) {
+      alert('Error creating article');
       console.error('Error creating article:', error);
+    } finally {
+      setIsSavingDraft(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -186,16 +206,21 @@ const AddArticle = () => {
             <FieldHint>Select the most appropriate category for your article</FieldHint>
           </Box>
           <Flex gap={4} justifyContent="flex-end" paddingTop={4}>
-            <Button
+            <StyledButton
               type="button"
               variant="secondary"
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, true)}
+              disabled={isSavingDraft || isSubmitting}
             >
-              Save as Draft
-            </Button>
-            <Button type="submit" variant="success">
-              Submit
-            </Button>
+              {isSavingDraft ? <Loader small /> : 'Save as Draft'}
+            </StyledButton>
+            <StyledButton
+              type="submit" 
+              variant="success"
+              disabled={isSavingDraft || isSubmitting}
+            >
+              {isSubmitting ? <Loader small /> : 'Submit'}
+            </StyledButton>
           </Flex>
         </form>
       </FormBox>

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import TooltipIconButton from '../TooltipIconButton';
 import { LinkButton } from '@strapi/design-system';
 import LoaderComponent from '../LoaderComponent';
+import { Loader } from '@strapi/design-system';
+
 interface Article {
   id: number;
   title: string;
@@ -16,9 +18,15 @@ interface Article {
   submissionStatus?: 'draft' | 'submitted' | 'pending_approval' | 'approved' | 'rejected';
 }
 
+type LoadingAction = {
+  id: number | null;
+  type: 'submit' | 'delete' | null;
+};
+
 const ContributorsPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<LoadingAction>({ id: null, type: null });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,21 +48,23 @@ const ContributorsPage = () => {
 
   const getStatusColor = (status: Article['status'] | Article['submissionStatus']) => {
     switch (status?.toLowerCase()) {
-      case 'approved':
-        return 'success';
-      case 'submitted':
-        return 'warning';
+      case 'published':
+        return 'success600';
+      case 'draft':
+        return 'warning600';
       case 'rejected':
-        return 'danger';
+        return 'danger600';
+      case 'approved':
+        return 'success600';
       default:
-        return 'neutral';
+        return 'neutral600';
     }
   };
 
   const handleSubmit = async (id: number) => {
     try {
+      setActionLoading({ id, type: 'submit' });
       const token = sessionStorage.getItem('jwtToken');
-      setLoading(true);
       const response = await fetch(`/submissions2/contributers/articles/update/${id}`, {
         method: 'PATCH',
         headers: {
@@ -68,10 +78,12 @@ const ContributorsPage = () => {
 
       if (!response.ok) throw new Error('Failed to create article');
 
-      setLoading(false);
       navigate('/plugins/submissions2/contributors');
     } catch (error) {
+      alert('Error creating article');
       console.error('Error creating article:', error);
+    } finally {
+      setActionLoading({ id: null, type: null });
     }
   };
 
@@ -79,8 +91,16 @@ const ContributorsPage = () => {
     console.log('Cancel article:', id);
   };
 
-  const handleDelete = (id: number) => {
-    console.log('Delete article:', id);
+  const handleDelete = async (id: number) => {
+    try {
+      setActionLoading({ id, type: 'delete' });
+      console.log('Delete article:', id);
+    } catch (error) {
+      alert('Error deleting article');
+      console.error('Error deleting article:', error);
+    } finally {
+      setActionLoading({ id: null, type: null });
+    }
   };
 
   const renderActionButtons = (article: Article) => {
@@ -90,17 +110,23 @@ const ContributorsPage = () => {
           <Flex gap={2}>
             <TooltipIconButton
               onClick={() => handleSubmit(article.id)}
+              disabled={actionLoading.id === article.id}
               label="Submit"
               variant="success"
             >
-              <Upload />
+              {actionLoading.id === article.id && actionLoading.type === 'submit' ? 
+                <Loader /> : <Upload />
+              }
             </TooltipIconButton>
             <TooltipIconButton
               onClick={() => handleDelete(article.id)}
+              disabled={actionLoading.id === article.id}
               label="Delete"
               variant="danger"
             >
-              <Trash />
+              {actionLoading.id === article.id && actionLoading.type === 'delete' ? 
+                <Loader /> : <Trash />
+              }
             </TooltipIconButton>
           </Flex>
         );
@@ -135,8 +161,8 @@ const ContributorsPage = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center" margin={6}>
-        <Typography variant="alpha" fontWeight="bold" margin={6}>
+      <Flex justifyContent="space-between" alignItems="center" padding={6} maxWidth="100%">
+        <Typography variant="alpha" fontWeight="bold">
           Contributor Articles
         </Typography>
         <LinkButton
@@ -148,89 +174,97 @@ const ContributorsPage = () => {
         </LinkButton>
       </Flex>
 
-      <Box padding={8} background="neutral100">
-        {loading ? (
-          <LoaderComponent />
-        ) : (
-          <Table colCount={6} rowCount={articles.length}>
-            <Thead>
-              <Tr>
-                <Th>
-                  <Typography variant="sigma">Title</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Description</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Author</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Category</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Submission Status</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Created At</Typography>
-                </Th>
-                <Th>
-                  <Typography variant="sigma">Actions</Typography>
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {articles.length > 0 &&
-                articles.map(
-                  (article: Article) => (
-                    console.log('article', article),
-                    (
-                      <Tr key={article.id}>
-                        <Td>
-                          <Typography textColor="neutral800">{article.title}</Typography>
-                        </Td>
-                        <Td>
-                          <Typography textColor="neutral800">
-                            {article.description.length > 50
-                              ? `${article.description.substring(0, 50)}...`
-                              : article.description}
-                          </Typography>
-                        </Td>
-                        <Td>
-                          <Typography textColor="neutral800">{article.author.name}</Typography>
-                        </Td>
-                        <Td>
-                          <Typography textColor="neutral800">{article.category.name}</Typography>
-                        </Td>
-                        <Td>
-                          <Typography
-                            textColor={
-                              article.status === 'published'
-                                ? 'success600'
-                                : article.status === 'draft'
-                                  ? 'neutral600'
-                                  : 'warning600'
-                            }
-                            fontWeight="bold"
-                          >
-                            {article?.submissionStatus}
-                          </Typography>
-                        </Td>
-                        <Td>
-                          <Typography textColor="neutral800">
-                            {new Date(article.createdAt).toLocaleDateString()}
-                          </Typography>
-                        </Td>
-                        <Td>
-                          <Flex gap={2}>{renderActionButtons(article)}</Flex>
-                        </Td>
-                      </Tr>
-                    )
-                  )
-                )}
-            </Tbody>
-          </Table>
-        )}
-      </Box>
+      <Box padding={6} background="neutral100">
+  {loading ? (
+    <LoaderComponent />
+  ) : (
+    <Box 
+      style={{
+        width: '100%',
+        maxWidth: '1350px',
+        maxHeight: '500px',
+        overflowY: 'auto',
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        margin: '0 auto',
+        display: 'block'
+      }}
+    >
+      <Table colCount={6} rowCount={articles.length}>
+        <Thead>
+          <Tr>
+            <Th>
+              <Typography variant="sigma">Title</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Description</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Author</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Category</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Submission Status</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Created At</Typography>
+            </Th>
+            <Th>
+              <Typography variant="sigma">Actions</Typography>
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {articles.map((article: Article) => (
+            <Tr key={article.id}>
+              <Td>
+                <Typography textColor="neutral800">{article.title}</Typography>
+              </Td>
+              <Td>
+                <Typography textColor="neutral800">
+                  {article.description.length > 50
+                    ? `${article.description.substring(0, 50)}...`
+                    : article.description}
+                </Typography>
+              </Td>
+              <Td>
+                <Typography textColor="neutral800">{article.author.name}</Typography>
+              </Td>
+              <Td>
+                <Typography textColor="neutral800">{article.category.name}</Typography>
+              </Td>
+              <Td>
+                <Typography
+                  textColor={getStatusColor(article?.submissionStatus)}
+                  fontWeight="bold"
+                  style={{
+                    textTransform: 'capitalize',
+                    padding: '6px 12px',
+                    borderRadius: '4px',
+                    backgroundColor: `${getStatusColor(article?.submissionStatus)}`,
+                    border: `1px solid ${getStatusColor(article?.submissionStatus)}`,
+                  }}
+                >
+                  {article?.submissionStatus}
+                </Typography>
+              </Td>
+              <Td>
+                <Typography textColor="neutral800">
+                  {new Date(article.createdAt).toLocaleDateString()}
+                </Typography>
+              </Td>
+              <Td>
+                <Flex gap={2}>{renderActionButtons(article)}</Flex>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </Box>
+  )}
+</Box>
     </>
   );
 };

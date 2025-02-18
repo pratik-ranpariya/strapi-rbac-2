@@ -19,9 +19,15 @@ interface Article {
   submissionStatus: 'draft' | 'submitted' | 'pending_approval' | 'approved' | 'rejected';
 }
 
+type LoadingAction = {
+  id: number | null;
+  type: 'approve' | 'reject' | null;
+};
+
 const EditorsPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<LoadingAction>({ id: null, type: null });
   const navigate = useNavigate();
 
   const fetchArticles = async () => {
@@ -44,13 +50,13 @@ const EditorsPage = () => {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'approved':
-        return 'success';
+        return 'success600';
       case 'submitted':
-        return 'warning';
+        return 'warning500';
       case 'rejected':
-        return 'danger';
+        return 'danger600';
       default:
-        return 'neutral';
+        return 'neutral600';
     }
   };
 
@@ -61,13 +67,13 @@ const EditorsPage = () => {
 
   const handleApprove = async (id: number) => {
     try {
+      setActionLoading({ id, type: 'approve' });
       const response = await fetch(`/submissions2/editors/articles/${id}/approve`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // approvedBy: 'Editor',
           approvalComments: 'Approved by Editor',
         }),
       });
@@ -79,45 +85,42 @@ const EditorsPage = () => {
       const data = await response.json();
       console.log('Approved article:', data);
 
-      // Fetch all articles after approval
-      await fetchArticles(); // Assuming you have a function to fetch all articles
-
-      // Navigate to the Editors page
-      navigate('/plugins/submissions2/editors'); // Adjust the path as necessary
+      await fetchArticles();
+      navigate('/plugins/submissions2/editors');
     } catch (error) {
+      alert('Error creating article');
       console.error('Error approving article:', error);
-      // Optionally, you can show a notification or alert to the user
+    } finally {
+      setActionLoading({ id: null, type: null });
     }
   };
 
   const handleReject = async (id: number) => {
     try {
+      setActionLoading({ id, type: 'reject' });
       const response = await fetch(`/submissions2/editors/articles/${id}/reject`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // approvedBy: 'Editor',
           approvalComments: 'Rejected by Editor',
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to approve article');
+        throw new Error('Failed to reject article');
       }
 
       const data = await response.json();
       console.log('Rejected article:', data);
 
-      // Fetch all articles after approval
-      await fetchArticles(); // Assuming you have a function to fetch all articles
-
-      // Navigate to the Editors page
-      navigate('/plugins/submissions2/editors'); // Adjust the path as necessary
+      await fetchArticles();
+      navigate('/plugins/submissions2/editors');
     } catch (error) {
       console.error('Error rejecting article:', error);
-      // Optionally, you can show a notification or alert to the user
+    } finally {
+      setActionLoading({ id: null, type: null });
     }
   };
 
@@ -127,18 +130,20 @@ const EditorsPage = () => {
         <Flex gap={2}>
           <TooltipIconButton
             onClick={() => handleApprove(article.id)}
+            disabled={actionLoading.id === article.id}
             label="Approve"
             variant="success"
           >
-            <Check />
+            {actionLoading.id === article.id && actionLoading.type === 'approve' ? <Loader /> : <Check />}
           </TooltipIconButton>
 
           <TooltipIconButton
             onClick={() => handleReject(article.id)}
+            disabled={actionLoading.id === article.id}
             label="Reject"
             variant="danger"
           >
-            <Cross />
+            {actionLoading.id === article.id && actionLoading.type === 'reject' ? <Loader /> : <Cross />}
           </TooltipIconButton>
         </Flex>
       );
@@ -152,10 +157,12 @@ const EditorsPage = () => {
         <LoaderComponent />
       ) : (
         <>
-          <Typography variant="alpha" fontWeight="bold" marginBottom={6}>
+        <Box padding={8} background="neutral100" overflowX="auto" paddingBottom={0}>
+          <Typography variant="alpha" fontWeight="bold">
             Editors Panel
           </Typography>
-          <Box padding={8} background="neutral100">
+        </Box>
+          <Box padding={8} background="neutral100" overflowX="auto">
             <Table colCount={6} rowCount={articles.length}>
               <Thead>
                 <Tr>
@@ -197,9 +204,19 @@ const EditorsPage = () => {
                       <Typography textColor="neutral800">{article.slug}</Typography>
                     </Td>
                     <Td>
-                      <Button disabled variant={getStatusColor(article?.submissionStatus)}>
+                      <Typography
+                        textColor={getStatusColor(article?.submissionStatus)}
+                        fontWeight="bold"
+                        style={{
+                          textTransform: 'capitalize',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          backgroundColor: `${getStatusColor(article?.submissionStatus)}10`,
+                          border: `1px solid ${getStatusColor(article?.submissionStatus)}`,
+                        }}
+                      >
                         {article.submissionStatus}
-                      </Button>
+                      </Typography>
                     </Td>
                     <Td>{renderActionButtons(article)}</Td>
                   </Tr>

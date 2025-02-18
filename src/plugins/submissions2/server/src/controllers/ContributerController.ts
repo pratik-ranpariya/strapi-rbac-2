@@ -90,6 +90,17 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
     ctx.body = { message: 'Article deleted successfully' };
   };
 
+  // Update a submission
+  const updateSubmission = async (ctx) => {
+    const { id } = ctx.params;
+    const { submissionStatus } = ctx.request.body;
+    const updatedArticle = await strapi
+      .plugin('submissions2')
+      .service('contributerService')
+      .updateArticle(id, { submissionStatus });
+    ctx.body = updatedArticle;
+  };
+
   return {
     index,
     find,
@@ -98,6 +109,7 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
     approveSubmission,
     rejectSubmission,
     deleteSubmission,
+    updateSubmission,
   };
 };
 

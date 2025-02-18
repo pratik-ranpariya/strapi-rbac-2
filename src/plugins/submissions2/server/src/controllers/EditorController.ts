@@ -60,6 +60,7 @@ const editorController = ({ strapi }: { strapi: Core.Strapi }) => {
   const rejectSubmission = async (ctx) => {
     const { id } = ctx.params;
     const { approvalComments } = ctx.request.body;
+    console.log('Rejecting article:', id);
     const updatedArticle = await strapi
       .plugin('submissions2')
       .service('editorService')

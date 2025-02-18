@@ -90,8 +90,35 @@ const EditorsPage = () => {
     }
   };
 
-  const handleReject = (id: number) => {
-    console.log('Rejected article:', id);
+  const handleReject = async (id: number) => {
+    try {
+      const response = await fetch(`/submissions2/editors/articles/${id}/reject`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          // approvedBy: 'Editor',
+          approvalComments: 'Rejected by Editor',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to approve article');
+      }
+
+      const data = await response.json();
+      console.log('Rejected article:', data);
+
+      // Fetch all articles after approval
+      await fetchArticles(); // Assuming you have a function to fetch all articles
+
+      // Navigate to the Editors page
+      navigate('/plugins/submissions2/editors'); // Adjust the path as necessary
+    } catch (error) {
+      console.error('Error rejecting article:', error);
+      // Optionally, you can show a notification or alert to the user
+    }
   };
 
   const renderActionButtons = (article: any) => {

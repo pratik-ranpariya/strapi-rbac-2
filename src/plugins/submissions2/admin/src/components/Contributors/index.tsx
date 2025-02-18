@@ -51,8 +51,28 @@ const ContributorsPage = () => {
     }
   };
 
-  const handleSubmit = (id: number) => {
-    console.log('Submit article:', id);
+  const handleSubmit = async (id: number) => {
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      setLoading(true);
+      const response = await fetch(`/submissions2/contributers/articles/update/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          submissionStatus: 'submitted',
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create article');
+
+      setLoading(false);
+      navigate('/plugins/submissions2/contributors');
+    } catch (error) {
+      console.error('Error creating article:', error);
+    }
   };
 
   const handleCancel = (id: number) => {

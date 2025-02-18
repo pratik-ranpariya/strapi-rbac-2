@@ -47,6 +47,15 @@ export default [
   },
 
   {
+    method: 'PATCH',
+    path: '/editors/articles/:id/reject',
+    handler: 'editor.rejectSubmission',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
     method: 'GET',
     path: '/contributers/articles',
     handler: 'contributer.index',
@@ -73,10 +82,19 @@ export default [
       auth: false,
     },
   },
+  // {
+  //   method: 'GET',
+  //   path: '/contributers/articles/:id',
+  //   handler: 'contributer.getSubmission',
+  //   config: {
+  //     policies: [],
+  //     auth: false,
+  //   },
+  // },
   {
-    method: 'GET',
-    path: '/contributers/articles/:id',
-    handler: 'contributer.getSubmission',
+    method: 'PATCH',
+    path: '/contributers/articles/update/:id',
+    handler: 'contributer.updateSubmission',
     config: {
       policies: [],
       auth: false,

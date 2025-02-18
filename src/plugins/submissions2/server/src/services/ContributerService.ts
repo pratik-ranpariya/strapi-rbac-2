@@ -1,7 +1,7 @@
 import { Core } from '@strapi/strapi';
 
 const contributerService = ({ strapi }: { strapi: Core.Strapi }) => {
-  // Get all articles for contributers
+  // Get all articles for editors
   const getContributersArticles = async () => {
     return await strapi.entityService.findMany('plugin::submissions2.article', {
       populate: ['author', 'category', 'cover'],

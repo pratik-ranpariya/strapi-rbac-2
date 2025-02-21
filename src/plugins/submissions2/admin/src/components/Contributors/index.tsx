@@ -1,5 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Table, Thead, Tbody, Tr, Td, Th, Typography, Flex, Box } from '@strapi/design-system';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Td,
+  Th,
+  Typography,
+  Flex,
+  Box,
+  Modal,
+  Button,
+} from '@strapi/design-system';
 import { Upload, Cross, Trash, Plus } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
 import TooltipIconButton from '../TooltipIconButton';
@@ -27,24 +39,30 @@ const ContributorsPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<LoadingAction>({ id: null, type: null });
+  const [token, setToken] = useState<string | null>(sessionStorage.getItem('jwtToken'));
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    const articles = await fetch('/submissions2/contributers/allArticles', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await articles.json();
+
+    setArticles(data);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      setLoading(true);
-      const articles = await fetch('/submissions2/contributers/allArticles', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await articles.json();
-
-      setArticles(data);
-      setLoading(false);
-    };
     fetchArticles();
   }, []);
+
+  //Method to get the color of the button based on the status of the article
 
   const getStatusColor = (status: Article['status'] | Article['submissionStatus']) => {
     switch (status?.toLowerCase()) {
@@ -61,10 +79,12 @@ const ContributorsPage = () => {
     }
   };
 
+  // Submit an article for approval
+
   const handleSubmit = async (id: number) => {
     try {
       setActionLoading({ id, type: 'submit' });
-      const token = sessionStorage.getItem('jwtToken');
+      // const token = sessionStorage.getItem('jwtToken');
       const response = await fetch(`/submissions2/contributers/articles/update/${id}`, {
         method: 'PATCH',
         headers: {
@@ -87,20 +107,54 @@ const ContributorsPage = () => {
     }
   };
 
+  // Once submitted and is not appropved or rejected, the user can cancel the submission
+
   const handleCancel = (id: number) => {
     console.log('Cancel article:', id);
   };
 
+  //Approved articles , if user wants to delete the article, the user can delete the article
+
   const handleDelete = async (id: number) => {
     try {
       setActionLoading({ id, type: 'delete' });
-      console.log('Delete article:', id);
+      const response = await fetch(`/submissions2/contributers/articles/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to delete article');
+      fetchArticles();
+      navigate('/plugins/submissions2/contributors');
     } catch (error) {
       alert('Error deleting article');
       console.error('Error deleting article:', error);
     } finally {
       setActionLoading({ id: null, type: null });
     }
+  };
+
+  const handleDeleteConfirmation = (id: number) => {
+    setArticleToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    console.log('articleToDelete', articleToDelete);
+    setLoading(true);
+    setIsModalOpen(false);
+    if (articleToDelete !== null) {
+      await handleDelete(articleToDelete);
+      setArticleToDelete(null);
+    }
+    setLoading(false);
+  };
+
+  const cancelDelete = () => {
+    setIsModalOpen(false);
   };
 
   const renderActionButtons = (article: Article) => {
@@ -114,19 +168,23 @@ const ContributorsPage = () => {
               label="Submit"
               variant="success"
             >
-              {actionLoading.id === article.id && actionLoading.type === 'submit' ? 
-                <Loader /> : <Upload />
-              }
+              {actionLoading.id === article.id && actionLoading.type === 'submit' ? (
+                <Loader />
+              ) : (
+                <Upload />
+              )}
             </TooltipIconButton>
             <TooltipIconButton
-              onClick={() => handleDelete(article.id)}
+              onClick={() => handleDeleteConfirmation(article.id)}
               disabled={actionLoading.id === article.id}
               label="Delete"
               variant="danger"
             >
-              {actionLoading.id === article.id && actionLoading.type === 'delete' ? 
-                <Loader /> : <Trash />
-              }
+              {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
+                <Loader />
+              ) : (
+                <Trash />
+              )}
             </TooltipIconButton>
           </Flex>
         );
@@ -146,7 +204,7 @@ const ContributorsPage = () => {
         return (
           <Flex gap={2}>
             <TooltipIconButton
-              onClick={() => handleDelete(article.id)}
+              onClick={() => handleDeleteConfirmation(article.id)}
               label="Delete"
               variant="danger"
             >
@@ -175,96 +233,115 @@ const ContributorsPage = () => {
       </Flex>
 
       <Box padding={6} background="neutral100">
-  {loading ? (
-    <LoaderComponent />
-  ) : (
-    <Box 
-      style={{
-        width: '100%',
-        maxWidth: '1350px',
-        maxHeight: '500px',
-        overflowY: 'auto',
-        overflowX: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        margin: '0 auto',
-        display: 'block'
-      }}
-    >
-      <Table colCount={6} rowCount={articles.length}>
-        <Thead>
-          <Tr>
-            <Th>
-              <Typography variant="sigma">Title</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Description</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Author</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Category</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Submission Status</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Created At</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">Actions</Typography>
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {articles.map((article: Article) => (
-            <Tr key={article.id}>
-              <Td>
-                <Typography textColor="neutral800">{article.title}</Typography>
-              </Td>
-              <Td>
-                <Typography textColor="neutral800">
-                  {article.description.length > 50
-                    ? `${article.description.substring(0, 50)}...`
-                    : article.description}
-                </Typography>
-              </Td>
-              <Td>
-                <Typography textColor="neutral800">{article.author.name}</Typography>
-              </Td>
-              <Td>
-                <Typography textColor="neutral800">{article.category.name}</Typography>
-              </Td>
-              <Td>
-                <Typography
-                  textColor={getStatusColor(article?.submissionStatus)}
-                  fontWeight="bold"
-                  style={{
-                    textTransform: 'capitalize',
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    backgroundColor: `${getStatusColor(article?.submissionStatus)}`,
-                    border: `1px solid ${getStatusColor(article?.submissionStatus)}`,
-                  }}
-                >
-                  {article?.submissionStatus}
-                </Typography>
-              </Td>
-              <Td>
-                <Typography textColor="neutral800">
-                  {new Date(article.createdAt).toLocaleDateString()}
-                </Typography>
-              </Td>
-              <Td>
-                <Flex gap={2}>{renderActionButtons(article)}</Flex>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Box>
-  )}
-</Box>
+        {loading ? (
+          <LoaderComponent />
+        ) : (
+          // <Box
+          //   style={{
+          //     width: '100%',
+          //     maxWidth: '1350px',
+          //     maxHeight: '500px',
+          //     overflowY: 'auto',
+          //     overflowX: 'auto',
+          //     WebkitOverflowScrolling: 'touch',
+          //     margin: '0 auto',
+          //     display: 'block',
+          //   }}
+          // >
+          <Table colCount={6} rowCount={articles.length}>
+            <Thead>
+              <Tr>
+                <Th>
+                  <Typography variant="sigma">Title</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Description</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Author</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Category</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Submission Status</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Created At</Typography>
+                </Th>
+                <Th>
+                  <Typography variant="sigma">Actions</Typography>
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {articles.map((article: Article) => (
+                <Tr key={article.id}>
+                  <Td>
+                    <Typography textColor="neutral800">{article.title}</Typography>
+                  </Td>
+                  <Td>
+                    <Typography textColor="neutral800">
+                      {article.description.length > 50
+                        ? `${article.description.substring(0, 50)}...`
+                        : article.description}
+                    </Typography>
+                  </Td>
+                  <Td>
+                    <Typography textColor="neutral800">{article.author.name}</Typography>
+                  </Td>
+                  <Td>
+                    <Typography textColor="neutral800">{article.category.name}</Typography>
+                  </Td>
+                  <Td>
+                    <Typography
+                      textColor={getStatusColor(article?.submissionStatus)}
+                      fontWeight="bold"
+                      style={{
+                        textTransform: 'capitalize',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        backgroundColor: `${getStatusColor(article?.submissionStatus)}`,
+                        border: `1px solid ${getStatusColor(article?.submissionStatus)}`,
+                      }}
+                    >
+                      {article?.submissionStatus}
+                    </Typography>
+                  </Td>
+                  <Td>
+                    <Typography textColor="neutral800">
+                      {new Date(article.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </Td>
+                  <Td>
+                    <Flex gap={2}>{renderActionButtons(article)}</Flex>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+          // </Box>
+        )}
+      </Box>
+
+      <Modal.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>Delete Article</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Typography>Are you sure you want to delete this article?</Typography>
+          </Modal.Body>
+          <Modal.Footer>
+            <Modal.Close>
+              <Button variant="tertiary">Cancel</Button>
+            </Modal.Close>
+            <Button variant="danger" onClick={confirmDelete}>
+              Confirm
+            </Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal.Root>
     </>
   );
 };

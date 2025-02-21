@@ -4,7 +4,7 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
-    "build": "strapi build",
+    "build": "cd src/plugins/submissions2 && yarn && yran build && cd ../../.. && strapi build",
     "deploy": "strapi deploy",
     "develop": "strapi develop --watch-admin",
     "seed:example": "node ./scripts/seed.js",

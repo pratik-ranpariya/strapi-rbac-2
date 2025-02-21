@@ -10,22 +10,24 @@ const StyledNavLink = styled(NavLink)`
   padding: 5px 20px;
   font-size: 1.33rem;
   transition: all 0.2s ease;
-  background: white;
-  border: 1px solid currentcolor;
+  background: ${({ theme }) => theme.colors.neutral0};
+  border: 1px solid ${({ theme }) => theme.colors.neutral600};
   border-radius: 4px;
   text-decoration: none;
-  color: currentcolor;
+  color: ${({ theme }) => theme.colors.neutral600};
   display: inline-block;
   cursor: pointer;
 
   &:hover {
-    background: #4945FF;
-    color: white;
+    background: ${({ theme }) => theme.colors.primary600};
+    color: ${({ theme }) => theme.colors.neutral0};
+    border-color: ${({ theme }) => theme.colors.primary600};
   }
 
   &.active {
-    background: #4945FF;
-    color: white;
+    background: ${({ theme }) => theme.colors.primary600};
+    color: ${({ theme }) => theme.colors.neutral0};
+    border-color: ${({ theme }) => theme.colors.primary600};
   }
 `;
 

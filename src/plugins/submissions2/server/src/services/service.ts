@@ -21,7 +21,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
       const users = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
         populate: '*',
       });
-
+      console.log('users', users);
       return users;
     } catch (error) {
       return console.log('Error fetching users', error);

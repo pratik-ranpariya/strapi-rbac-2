@@ -5,8 +5,6 @@ import HomePage from './HomePage';
 import Editors from '../components/Editors';
 import Contributors from '../components/Contributors';
 import AddArticle from '../components/AddArticle';
-import { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
 
 const App = () => {
   return (

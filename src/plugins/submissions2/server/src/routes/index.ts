@@ -91,19 +91,20 @@ export default [
       auth: false,
     },
   },
-  // {
-  //   method: 'GET',
-  //   path: '/contributers/articles/:id',
-  //   handler: 'contributer.getSubmission',
-  //   config: {
-  //     policies: [],
-  //     auth: false,
-  //   },
-  // },
   {
-    method: 'PATCH',
+    method: 'GET',
+    path: '/contributers/articles/:id',
+    handler: 'contributer.getSubmission',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: 'PUT',
     path: '/contributers/articles/update/:id',
-    handler: 'contributer.updateSubmission',
+    handler: 'contributer.editSubmission',
     config: {
       policies: [],
       auth: false,

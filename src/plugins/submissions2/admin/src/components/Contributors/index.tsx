@@ -12,7 +12,7 @@ import {
   Modal,
   Button,
 } from '@strapi/design-system';
-import { Upload, Cross, Trash, Plus } from '@strapi/icons';
+import { Upload, Cross, Trash, Plus, Pencil } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
 import TooltipIconButton from '../TooltipIconButton';
 import { LinkButton } from '@strapi/design-system';
@@ -86,7 +86,7 @@ const ContributorsPage = () => {
       setActionLoading({ id, type: 'submit' });
       // const token = sessionStorage.getItem('jwtToken');
       const response = await fetch(`/submissions2/contributers/articles/update/${id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -154,8 +154,8 @@ const ContributorsPage = () => {
     setLoading(false);
   };
 
-  const cancelDelete = () => {
-    setIsModalOpen(false);
+  const handleEdit = async (id: number) => {
+    navigate(`edit-article/${id}`);
   };
 
   const renderActionButtons = (article: Article) => {
@@ -170,7 +170,9 @@ const ContributorsPage = () => {
               variant="success"
             >
               {actionLoading.id === article.id && actionLoading.type === 'submit' ? (
-                <Loader small />
+                <Flex justifyContent="center" alignItems="center">
+                  <Loader small />
+                </Flex>
               ) : (
                 <Upload />
               )}
@@ -185,6 +187,18 @@ const ContributorsPage = () => {
                 <Loader />
               ) : (
                 <Trash />
+              )}
+            </TooltipIconButton>
+            <TooltipIconButton
+              onClick={() => handleEdit(article.id)}
+              disabled={actionLoading.id === article.id}
+              label="Edit"
+              variant="warning"
+            >
+              {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
+                <Loader />
+              ) : (
+                <Pencil />
               )}
             </TooltipIconButton>
           </Flex>

@@ -62,7 +62,6 @@ const HomePage = () => {
             },
           });
           const data = await response.json();
-          console.log('Data', data);
           setLoggedInUser(data);
         } catch (error) {
           console.error('Error fetching logged in user:', error);
@@ -72,8 +71,6 @@ const HomePage = () => {
       fetchLoggedInUser();
     }
   }, [userId, token]);
-
-  console.log('Logged In User', loggedInUser?.role?.name);
 
   const renderContent = () => {
     if (currentPath === `/plugins/${PLUGIN_ID}/contributors`) {
@@ -103,7 +100,9 @@ const HomePage = () => {
       <Box paddingBottom={4}>
         <nav>
           <Flex gap={4}>
-            {loggedInUser?.role?.name === 'Contributor' && (
+            {(loggedInUser?.role?.name === 'Contributor' ||
+              loggedInUser?.role?.name === 'Editor' ||
+              loggedInUser?.role?.name === 'Authenticated') && (
               <StyledNavLink
                 to={`/plugins/${PLUGIN_ID}/contributors`}
                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -111,7 +110,8 @@ const HomePage = () => {
                 Contributors
               </StyledNavLink>
             )}
-            {loggedInUser?.role?.name === 'Editor' && (
+            {(loggedInUser?.role?.name === 'Editor' ||
+              loggedInUser?.role?.name === 'Authenticated') && (
               <StyledNavLink
                 to={`/plugins/${PLUGIN_ID}/editors`}
                 className={({ isActive }) => (isActive ? 'active' : '')}

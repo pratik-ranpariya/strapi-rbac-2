@@ -14,7 +14,8 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   },
 
   async getLoggedInUser(ctx) {
-    return await strapi.plugin('submissions2').service('service').getLoggedInUser(ctx.query.userId);
+    const { userId } = ctx.params;
+    return await strapi.plugin('submissions2').service('service').getLoggedInUser(userId);
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Flex } from '@strapi/design-system';
 import { NavLink, useLocation } from 'react-router-dom';
 import { PLUGIN_ID } from '../pluginId';
@@ -54,7 +54,7 @@ const HomePage = () => {
     if (userId) {
       const fetchLoggedInUser = async () => {
         try {
-          const response = await fetch(`/submissions2/current-user?userId=${userId}`, {
+          const response = await fetch(`/submissions2/current-user/${userId}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -103,22 +103,22 @@ const HomePage = () => {
       <Box paddingBottom={4}>
         <nav>
           <Flex gap={4}>
-            {/* {loggedInUser?.role?.name === 'Contributor' && ( */}
-            <StyledNavLink
-              to={`/plugins/${PLUGIN_ID}/contributors`}
-              className={({ isActive }) => (isActive ? 'active' : '')}
-            >
-              Contributors
-            </StyledNavLink>
-            {/* )} */}
-            {/* {loggedInUser?.role?.name === 'Editor' && ( */}
-            <StyledNavLink
-              to={`/plugins/${PLUGIN_ID}/editors`}
-              className={({ isActive }) => (isActive ? 'active' : '')}
-            >
-              Editors
-            </StyledNavLink>
-            {/* )} */}
+            {loggedInUser?.role?.name === 'Contributor' && (
+              <StyledNavLink
+                to={`/plugins/${PLUGIN_ID}/contributors`}
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Contributors
+              </StyledNavLink>
+            )}
+            {loggedInUser?.role?.name === 'Editor' && (
+              <StyledNavLink
+                to={`/plugins/${PLUGIN_ID}/editors`}
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Editors
+              </StyledNavLink>
+            )}
           </Flex>
         </nav>
       </Box>

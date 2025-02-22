@@ -103,24 +103,22 @@ const HomePage = () => {
       <Box paddingBottom={4}>
         <nav>
           <Flex gap={4}>
-            {loggedInUser?.role?.name === 'Contributor' ||
-              (loggedInUser?.role?.name === 'Authenticated' && (
-                <StyledNavLink
-                  to={`/plugins/${PLUGIN_ID}/contributors`}
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                >
-                  Contributors
-                </StyledNavLink>
-              ))}
-            {loggedInUser?.role?.name === 'Editor' ||
-              (loggedInUser?.role?.name === 'Authenticated' && (
-                <StyledNavLink
-                  to={`/plugins/${PLUGIN_ID}/editors`}
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                >
-                  Editors
-                </StyledNavLink>
-              ))}
+            {/* {loggedInUser?.role?.name === 'Contributor' && ( */}
+            <StyledNavLink
+              to={`/plugins/${PLUGIN_ID}/contributors`}
+              className={({ isActive }) => (isActive ? 'active' : '')}
+            >
+              Contributors
+            </StyledNavLink>
+            {/* )} */}
+            {/* {loggedInUser?.role?.name === 'Editor' && ( */}
+            <StyledNavLink
+              to={`/plugins/${PLUGIN_ID}/editors`}
+              className={({ isActive }) => (isActive ? 'active' : '')}
+            >
+              Editors
+            </StyledNavLink>
+            {/* )} */}
           </Flex>
         </nav>
       </Box>

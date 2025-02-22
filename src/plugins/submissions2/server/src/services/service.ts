@@ -16,6 +16,17 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getAllAuthors() {
     return await strapi.entityService.findMany('api::author.author');
   },
+  async getLoggedInUser(userId: string) {
+    try {
+      const users = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
+        populate: '*',
+      });
+
+      return users;
+    } catch (error) {
+      return console.log('Error fetching users', error);
+    }
+  },
 });
 
 export default service;

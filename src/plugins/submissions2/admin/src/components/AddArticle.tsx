@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FormBox = styled(Box)`
-  background: white;
+  background: ${({ theme }) => theme.colors.neutral100};
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(33, 33, 52, 0.1);
   padding: 24px;
@@ -76,11 +76,6 @@ const AddArticle = () => {
     fetchAuthorsAndCategories();
   }, []);
 
-  const getLoggedInUser = () => {
-    const token = sessionStorage.getItem('jwtToken');
-    return token ? jwtDecode(token) : null;
-  };
-
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
     isDraft = false
@@ -120,17 +115,12 @@ const AddArticle = () => {
     }
   };
 
-  useEffect(() => {
-    const user = getLoggedInUser();
-    if (user) console.log('Logged in user:', user);
-  }, []);
-
   return (
     <Box padding={8} background="neutral100">
       <Typography variant="alpha" fontWeight="bold" marginBottom={10}>
         Add New Article
       </Typography>
-      <FormBox>
+      <FormBox background="neutral100">
         <form onSubmit={(e) => handleSubmit(e)}>
           <Box marginBottom={4} marginTop={5}>
             <FieldLabel>Title</FieldLabel>
@@ -214,11 +204,7 @@ const AddArticle = () => {
             >
               {isSavingDraft ? <Loader small /> : 'Save as Draft'}
             </StyledButton>
-            <StyledButton
-              type="submit" 
-              variant="success"
-              disabled={isSavingDraft || isSubmitting}
-            >
+            <StyledButton type="submit" variant="success" disabled={isSavingDraft || isSubmitting}>
               {isSubmitting ? <Loader small /> : 'Submit'}
             </StyledButton>
           </Flex>

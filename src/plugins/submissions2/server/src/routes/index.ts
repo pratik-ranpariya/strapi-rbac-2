@@ -1,6 +1,15 @@
 export default [
   {
     method: 'GET',
+    path: '/current-user/:userId',
+    handler: 'controller.getLoggedInUser',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: 'GET',
     path: '/',
     handler: 'controller.index',
     config: {

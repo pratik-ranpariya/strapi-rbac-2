@@ -12,6 +12,10 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   async getAuthors(ctx) {
     return await strapi.plugin('submissions2').service('service').getAllAuthors();
   },
+
+  async getLoggedInUser(ctx) {
+    return await strapi.plugin('submissions2').service('service').getLoggedInUser(ctx.query.userId);
+  },
 });
 
 export default controller;

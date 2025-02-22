@@ -98,6 +98,7 @@ const ContributorsPage = () => {
 
       if (!response.ok) throw new Error('Failed to create article');
 
+      fetchArticles();
       navigate('/plugins/submissions2/contributors');
     } catch (error) {
       alert('Error creating article');
@@ -169,7 +170,7 @@ const ContributorsPage = () => {
               variant="success"
             >
               {actionLoading.id === article.id && actionLoading.type === 'submit' ? (
-                <Loader />
+                <Loader small />
               ) : (
                 <Upload />
               )}
@@ -236,18 +237,6 @@ const ContributorsPage = () => {
         {loading ? (
           <LoaderComponent />
         ) : (
-          // <Box
-          //   style={{
-          //     width: '100%',
-          //     maxWidth: '1350px',
-          //     maxHeight: '500px',
-          //     overflowY: 'auto',
-          //     overflowX: 'auto',
-          //     WebkitOverflowScrolling: 'touch',
-          //     margin: '0 auto',
-          //     display: 'block',
-          //   }}
-          // >
           <Table colCount={6} rowCount={articles.length}>
             <Thead>
               <Tr>

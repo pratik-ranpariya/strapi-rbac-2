@@ -1,6 +1,16 @@
-import { Box, Typography, Table, Thead, Tbody, Tr, Td, Th, Flex } from '@strapi/design-system';
-import { Check, Cross, Loader, More } from '@strapi/icons';
-import { Button } from '@strapi/design-system';
+import {
+  Box,
+  Typography,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Td,
+  Th,
+  Flex,
+  Loader,
+} from '@strapi/design-system';
+import { Check, Cross } from '@strapi/icons';
 import TooltipIconButton from '../TooltipIconButton';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -134,7 +144,11 @@ const EditorsPage = () => {
             label="Approve"
             variant="success"
           >
-            {actionLoading.id === article.id && actionLoading.type === 'approve' ? <Loader /> : <Check />}
+            {actionLoading.id === article.id && actionLoading.type === 'approve' ? (
+              <Loader />
+            ) : (
+              <Check />
+            )}
           </TooltipIconButton>
 
           <TooltipIconButton
@@ -143,7 +157,11 @@ const EditorsPage = () => {
             label="Reject"
             variant="danger"
           >
-            {actionLoading.id === article.id && actionLoading.type === 'reject' ? <Loader /> : <Cross />}
+            {actionLoading.id === article.id && actionLoading.type === 'reject' ? (
+              <Loader small />
+            ) : (
+              <Cross />
+            )}
           </TooltipIconButton>
         </Flex>
       );
@@ -157,11 +175,11 @@ const EditorsPage = () => {
         <LoaderComponent />
       ) : (
         <>
-        <Box padding={8} background="neutral100" overflowX="auto" paddingBottom={0}>
-          <Typography variant="alpha" fontWeight="bold">
-            Editors Panel
-          </Typography>
-        </Box>
+          <Box padding={8} background="neutral100" overflowX="auto" paddingBottom={0}>
+            <Typography variant="alpha" fontWeight="bold">
+              Editors Panel
+            </Typography>
+          </Box>
           <Box padding={8} background="neutral100" overflowX="auto">
             <Table colCount={6} rowCount={articles.length}>
               <Thead>

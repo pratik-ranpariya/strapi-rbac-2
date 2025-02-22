@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Flex } from '@strapi/design-system';
 import { NavLink, useLocation } from 'react-router-dom';
 import { PLUGIN_ID } from '../pluginId';
 import Contributors from '../components/Contributors/index.js';
 import Editors from '../components/Editors/index.js';
 import styled from 'styled-components';
+import { jwtDecode } from 'jwt-decode';
 
 const StyledNavLink = styled(NavLink)`
   padding: 5px 20px;
@@ -34,6 +35,45 @@ const StyledNavLink = styled(NavLink)`
 const HomePage = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [loggedInUser, setLoggedInUser] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(sessionStorage.getItem('jwtToken'));
+
+  const getLoggedInUser = () => {
+    return token ? jwtDecode(token) : null;
+  };
+
+  useEffect(() => {
+    const user = getLoggedInUser();
+    if (user && (user as any).id) {
+      setUserId((user as any).id);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (userId) {
+      const fetchLoggedInUser = async () => {
+        try {
+          const response = await fetch(`/submissions2/current-user?userId=${userId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          console.log('Data', data);
+          setLoggedInUser(data);
+        } catch (error) {
+          console.error('Error fetching logged in user:', error);
+        }
+      };
+
+      fetchLoggedInUser();
+    }
+  }, [userId, token]);
+
+  console.log('Logged In User', loggedInUser?.role?.name);
 
   const renderContent = () => {
     if (currentPath === `/plugins/${PLUGIN_ID}/contributors`) {
@@ -63,18 +103,22 @@ const HomePage = () => {
       <Box paddingBottom={4}>
         <nav>
           <Flex gap={4}>
-            <StyledNavLink
-              to={`/plugins/${PLUGIN_ID}/contributors`}
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Contributors
-            </StyledNavLink>
-            <StyledNavLink
-              to={`/plugins/${PLUGIN_ID}/editors`}
-              className={({ isActive }) => isActive ? 'active' : ''}
-            >
-              Editors
-            </StyledNavLink>
+            {loggedInUser?.role?.name === 'Contributor' && (
+              <StyledNavLink
+                to={`/plugins/${PLUGIN_ID}/contributors`}
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Contributors
+              </StyledNavLink>
+            )}
+            {loggedInUser?.role?.name === 'Editor' && (
+              <StyledNavLink
+                to={`/plugins/${PLUGIN_ID}/editors`}
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Editors
+              </StyledNavLink>
+            )}
           </Flex>
         </nav>
       </Box>

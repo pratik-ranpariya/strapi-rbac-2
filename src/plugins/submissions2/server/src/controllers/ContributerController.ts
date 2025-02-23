@@ -36,7 +36,6 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
 
   // Get a specific submission by ID
   const getSubmission = async (ctx) => {
-    console.log('getSubmission', ctx.params);
     const { id } = ctx.params;
     const article = await strapi
       .plugin('submissions2')

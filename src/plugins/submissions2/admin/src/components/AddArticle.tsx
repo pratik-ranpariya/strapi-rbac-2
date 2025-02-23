@@ -108,7 +108,6 @@ const AddArticle = () => {
   ) => {
     e.preventDefault();
 
-    console.log('Description', title, author, category, description);
     try {
       if (isDraft) {
         setIsSavingDraft(true);

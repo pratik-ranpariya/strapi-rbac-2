@@ -59,7 +59,6 @@ const ContributorsPage = () => {
       },
     });
     const data = await articles.json();
-    console.log('Data', data);
 
     setArticles(data);
     setLoading(false);

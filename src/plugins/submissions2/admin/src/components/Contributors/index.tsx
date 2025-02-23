@@ -27,12 +27,18 @@ interface Article {
   category: { name: string };
   status: 'published' | 'draft' | 'pending';
   createdAt: string;
-  submissionStatus?: 'draft' | 'submitted' | 'pending_approval' | 'approved' | 'rejected';
+  submissionStatus?:
+    | 'draft'
+    | 'submitted'
+    | 'canceled'
+    | 'pending_approval'
+    | 'approved'
+    | 'rejected';
 }
 
 type LoadingAction = {
   id: number | null;
-  type: 'submit' | 'delete' | null;
+  type: 'submit' | 'delete' | 'cancel' | null;
 };
 
 const ContributorsPage = () => {
@@ -53,6 +59,7 @@ const ContributorsPage = () => {
       },
     });
     const data = await articles.json();
+    console.log('Data', data);
 
     setArticles(data);
     setLoading(false);
@@ -110,8 +117,30 @@ const ContributorsPage = () => {
 
   // Once submitted and is not appropved or rejected, the user can cancel the submission
 
-  const handleCancel = (id: number) => {
-    console.log('Cancel article:', id);
+  const handleCancel = async (id: number) => {
+    try {
+      setActionLoading({ id, type: 'cancel' });
+      const response = await fetch(`/submissions2/contributers/articles/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          submissionStatus: 'canceled',
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to cancel article');
+
+      fetchArticles();
+      navigate('/plugins/submissions2/contributors');
+    } catch (error) {
+      alert('Error canceling article');
+      console.error('Error canceling article:', error);
+    } finally {
+      setActionLoading({ id: null, type: null });
+    }
   };
 
   //Approved articles , if user wants to delete the article, the user can delete the article

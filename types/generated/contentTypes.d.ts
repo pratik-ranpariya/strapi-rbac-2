@@ -769,10 +769,7 @@ export interface PluginSubmissions2Article extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 80;
-      }>;
+    description: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -782,7 +779,14 @@ export interface PluginSubmissions2Article extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
     submissionStatus: Schema.Attribute.Enumeration<
-      ['draft', 'submitted', 'pending_approval', 'approved', 'rejected']
+      [
+        'draft',
+        'submitted',
+        'canceled',
+        'pending_approval',
+        'approved',
+        'rejected',
+      ]
     > &
       Schema.Attribute.DefaultTo<'draft'>;
     title: Schema.Attribute.String;

@@ -13,6 +13,8 @@ import {
 } from '@strapi/design-system';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import the styles for the editor
 
 const FormBox = styled(Box)`
   background: ${({ theme }) => theme.colors.neutral100};
@@ -43,7 +45,7 @@ const StyledButton = styled(Button)`
 
 const AddArticle = () => {
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(' \n\n\n\n\n\n\n\n\n\n');
   const [author, setAuthor] = useState('');
   const [category, setCategory] = useState('');
   const [authors, setAuthors] = useState([]);
@@ -51,6 +53,30 @@ const AddArticle = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const navigate = useNavigate();
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+      ['link', 'image'],
+      ['clean'],
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+  ];
 
   useEffect(() => {
     const fetchAuthorsAndCategories = async () => {
@@ -81,6 +107,8 @@ const AddArticle = () => {
     isDraft = false
   ) => {
     e.preventDefault();
+
+    console.log('Description', title, author, category, description);
     try {
       if (isDraft) {
         setIsSavingDraft(true);
@@ -134,14 +162,14 @@ const AddArticle = () => {
           </Box>
           <Box marginBottom={4}>
             <FieldLabel>Description</FieldLabel>
-            <Textarea
-              placeholder="Write a detailed description of your article"
+            <ReactQuill
               value={description}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setDescription(e.target.value)
-              }
-              required
-              style={{ minHeight: '120px' }}
+              onChange={(value: string) => setDescription(value)}
+              modules={modules}
+              placeholder="Write a detailed description of your article..."
+              bounds={'.editor-container'}
+              formats={formats}
+              theme="snow"
             />
             <FieldHint>Provide a comprehensive description of your article's content</FieldHint>
           </Box>

@@ -34,7 +34,8 @@
     "@strapi/design-system": "^2.0.0-rc.16",
     "@strapi/icons": "^2.0.0-rc.16",
     "jwt-decode": "^4.0.0",
-    "react-intl": "^7.1.6"
+    "react-intl": "^7.1.6",
+    "react-quill": "^2.0.0"
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.3.1",

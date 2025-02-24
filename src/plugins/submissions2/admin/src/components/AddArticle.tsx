@@ -52,6 +52,9 @@ const AddArticle = () => {
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState('');
+
+  const [token, setToken] = useState(sessionStorage.getItem('jwtToken'));
   const navigate = useNavigate();
 
   const modules = {
@@ -159,6 +162,40 @@ const AddArticle = () => {
             />
             <FieldHint>A clear and descriptive title for your article</FieldHint>
           </Box>
+          {/* <Box marginBottom={4} marginTop={5}>
+            <FieldLabel>Cover Photo</FieldLabel>
+            <TextInput
+              type="file"
+              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  // const token = sessionStorage.getItem('jwtToken');
+                  const formData = new FormData();
+                  formData.append('files', file);
+
+                  try {
+                    const headers = {
+                      Authorization: `Bearer ${token}`,
+                    };
+                    console.log('Headers:', headers); // Check if the headers are set correctly
+                    const response = await fetch('/upload', {
+                      method: 'POST',
+                      headers: headers,
+                      body: formData,
+                    });
+
+                    if (!response.ok) throw new Error('Failed to upload image');
+                    const data = await response.json();
+                    setCoverPhoto(data[0].url); // Assuming the response contains the uploaded file's URL
+                  } catch (error) {
+                    console.error('Error uploading image:', error);
+                  }
+                }
+              }}
+              required
+            />
+            <FieldHint>A Cover image for your article</FieldHint>
+          </Box> */}
           <Box marginBottom={4}>
             <FieldLabel>Description</FieldLabel>
             <ReactQuill

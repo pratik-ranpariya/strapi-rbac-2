@@ -56,14 +56,14 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
       .service('contributerService')
       .updateArticle(id, {
         submissionStatus: 'approved',
+        status: 'published',
         approvedBy,
         approvalComments,
         approvalDate: new Date(),
       });
     ctx.body = updatedArticle;
   };
-
-  // Reject a submission
+  // Reject a submission1
   const rejectSubmission = async (ctx) => {
     const { id } = ctx.params;
     const { approvalComments } = ctx.request.body;

@@ -50,6 +50,8 @@ const HomePage = () => {
     }
   }, [token]);
 
+  console.log('Logged in user', loggedInUser?.roles[0].id);
+
   useEffect(() => {
     if (userId) {
       const fetchLoggedInUser = async () => {
@@ -100,9 +102,9 @@ const HomePage = () => {
       <Box paddingBottom={4}>
         <nav>
           <Flex gap={4}>
-            {(loggedInUser?.role?.name === 'Contributor' ||
-              loggedInUser?.role?.name === 'Editor' ||
-              loggedInUser?.role?.name === 'Authenticated') && (
+            {(loggedInUser?.roles[0].id === 3 ||
+              loggedInUser?.roles[0].id === 1 ||
+              loggedInUser?.roles[0].id === 2) && (
               <StyledNavLink
                 to={`/plugins/${PLUGIN_ID}/contributors`}
                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -110,8 +112,7 @@ const HomePage = () => {
                 Contributors
               </StyledNavLink>
             )}
-            {(loggedInUser?.role?.name === 'Editor' ||
-              loggedInUser?.role?.name === 'Authenticated') && (
+            {(loggedInUser?.roles[0].id === 1 || loggedInUser?.roles[0].id === 2) && (
               <StyledNavLink
                 to={`/plugins/${PLUGIN_ID}/editors`}
                 className={({ isActive }) => (isActive ? 'active' : '')}

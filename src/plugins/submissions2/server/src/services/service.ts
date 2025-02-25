@@ -18,7 +18,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
   },
   async getLoggedInUser(userId: string) {
     try {
-      const users = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
+      const users = await strapi.entityService.findOne('admin::user', userId, {
         populate: '*',
       });
       console.log('users', users);

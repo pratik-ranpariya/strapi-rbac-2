@@ -145,7 +145,7 @@ const EditorsPage = () => {
             variant="success"
           >
             {actionLoading.id === article.id && actionLoading.type === 'approve' ? (
-              <Loader />
+              <Loader small />
             ) : (
               <Check />
             )}

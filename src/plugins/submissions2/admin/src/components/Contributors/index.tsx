@@ -11,13 +11,13 @@ import {
   Box,
   Modal,
   Button,
+  Loader
 } from '@strapi/design-system';
 import { Upload, Cross, Trash, Plus, Pencil } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
 import TooltipIconButton from '../TooltipIconButton';
 import { LinkButton } from '@strapi/design-system';
 import LoaderComponent from '../LoaderComponent';
-import { Loader } from '@strapi/design-system';
 
 interface Article {
   id: number;
@@ -38,7 +38,7 @@ interface Article {
 
 type LoadingAction = {
   id: number | null;
-  type: 'submit' | 'delete' | 'cancel' | null;
+  type: 'submit' | 'delete' | 'cancel' | 'edit' | null;
 };
 
 const ContributorsPage = () => {
@@ -51,17 +51,21 @@ const ContributorsPage = () => {
   const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
 
   const fetchArticles = async () => {
-    setLoading(true);
-    const articles = await fetch('/submissions2/contributers/allArticles', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await articles.json();
-
-    setArticles(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const articles = await fetch('/submissions2/contributers/allArticles', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await articles.json();
+      setArticles(data);
+    } catch (error) {
+      console.log(error, 'error');
+    }finally{
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -173,17 +177,17 @@ const ContributorsPage = () => {
 
   const confirmDelete = async () => {
     console.log('articleToDelete', articleToDelete);
-    setLoading(true);
-    setIsModalOpen(false);
     if (articleToDelete !== null) {
       await handleDelete(articleToDelete);
       setArticleToDelete(null);
+      setIsModalOpen(false);
     }
-    setLoading(false);
   };
 
   const handleEdit = async (id: number) => {
+    setActionLoading({ id, type: 'edit' });
     navigate(`edit-article/${id}`);
+    setActionLoading({ id: null, type: null });
   };
 
   const renderActionButtons = (article: Article) => {
@@ -198,8 +202,12 @@ const ContributorsPage = () => {
               variant="success"
             >
               {actionLoading.id === article.id && actionLoading.type === 'submit' ? (
-                <Flex justifyContent="center" alignItems="center">
-                  <Loader small />
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                style={{ height: '15px' }}
+              >
+                <Loader style={{ width: 15, height: 15 }} />
                 </Flex>
               ) : (
                 <Upload />
@@ -212,7 +220,13 @@ const ContributorsPage = () => {
               variant="danger"
             >
               {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
-                <Loader />
+                <Flex
+                justifyContent="center"
+                alignItems="center"
+                style={{ height: '15px' }}
+              >
+                <Loader style={{ width: 15, height: 15 }} />
+              </Flex>
               ) : (
                 <Trash />
               )}
@@ -223,7 +237,7 @@ const ContributorsPage = () => {
               label="Edit"
               variant="warning"
             >
-              {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
+              {actionLoading.id === article.id && actionLoading.type === 'edit' ? (
                 <Loader />
               ) : (
                 <Pencil />
@@ -236,10 +250,21 @@ const ContributorsPage = () => {
           <Flex gap={2}>
             <TooltipIconButton
               onClick={() => handleCancel(article.id)}
+              disabled={actionLoading.id === article.id}
               label="Cancel"
               variant="danger"
             >
-              <Cross />
+              {actionLoading.id === article.id && actionLoading.type === 'cancel' ? (
+                <Flex
+                justifyContent="center"
+                alignItems="center"
+                style={{ height: '15px' }}
+              >
+                <Loader style={{ width: 15, height: 15 }} />
+              </Flex>
+              ) : (
+                <Cross />
+              )}
             </TooltipIconButton>
           </Flex>
         );
@@ -251,7 +276,19 @@ const ContributorsPage = () => {
               label="Delete"
               variant="danger"
             >
-              <Trash />
+            {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                style={{ height: '15px' }}
+              >
+                <Loader style={{ width: 15, height: 15 }} />
+              </Flex>)
+              : (
+                <>
+                  <Trash />
+                </>
+              )}
             </TooltipIconButton>
           </Flex>
         );
@@ -367,8 +404,15 @@ const ContributorsPage = () => {
             <Modal.Close>
               <Button variant="tertiary">Cancel</Button>
             </Modal.Close>
-            <Button variant="danger" onClick={confirmDelete}>
-              Confirm
+            <Button variant="danger" onClick={confirmDelete} disabled={actionLoading.id && actionLoading.type === 'delete'} >
+            {actionLoading.id && actionLoading.type === 'delete' ? (
+                <Loader style={{ width: 15, height: 15 }} />
+              )
+              : (
+                <>
+                  Confirm
+                </>
+              )}
             </Button>
           </Modal.Footer>
         </Modal.Content>

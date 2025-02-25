@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles for the editor
+import { Drag } from '@strapi/icons';
 
 const FormBox = styled(Box)`
   background: ${({ theme }) => theme.colors.neutral100};
@@ -43,6 +44,30 @@ const StyledButton = styled(Button)`
   align-items: center;
 `;
 
+const EditorWrapper = styled(Box)`
+  position: relative;
+  min-height: 200px;
+  resize: vertical;
+  overflow: hidden;
+`;
+
+const ResizeHandle = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: ns-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.neutral400};
+  
+  &:hover {
+    color: ${({ theme }) => theme.colors.neutral600};
+  }
+`;
+
 const AddArticle = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState(' \n\n\n\n\n\n\n\n\n\n');
@@ -52,7 +77,7 @@ const AddArticle = () => {
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-  const [coverPhoto, setCoverPhoto] = useState('');
+  const [editorHeight, setEditorHeight] = useState(200);
 
   const [token, setToken] = useState(sessionStorage.getItem('jwtToken'));
   const navigate = useNavigate();
@@ -80,6 +105,31 @@ const AddArticle = () => {
     'link',
     'image',
   ];
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    const startY = e.pageY;
+    const startHeight = editorHeight;
+    
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaY = moveEvent.pageY - startY;
+      const newHeight = Math.max(200, startHeight + deltaY); // Minimum height of 200px
+      setEditorHeight(newHeight);
+    };
+    
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const editorStyle = {
+    height: `${editorHeight}px`,
+  };
 
   useEffect(() => {
     const fetchAuthorsAndCategories = async () => {
@@ -198,15 +248,21 @@ const AddArticle = () => {
           </Box> */}
           <Box marginBottom={4}>
             <FieldLabel>Description</FieldLabel>
-            <ReactQuill
-              value={description}
-              onChange={(value: string) => setDescription(value)}
-              modules={modules}
-              placeholder="Write a detailed description of your article..."
-              bounds={'.editor-container'}
-              formats={formats}
-              theme="snow"
-            />
+            <EditorWrapper style={editorStyle}>
+              <ReactQuill
+                value={description}
+                onChange={(value: string) => setDescription(value)}
+                modules={modules}
+                placeholder="Write a detailed description of your article..."
+                bounds={'.editor-container'}
+                formats={formats}
+                theme="snow"
+                style={{ height: '100%' }}
+              />
+              <ResizeHandle onMouseDown={handleMouseDown}>
+                <Drag width="12px" />
+              </ResizeHandle>
+            </EditorWrapper>
             <FieldHint>Provide a comprehensive description of your article's content</FieldHint>
           </Box>
           <Box marginBottom={4}>
@@ -277,5 +333,21 @@ const AddArticle = () => {
     </Box>
   );
 };
+
+const styles = `
+  .ql-editor {
+    min-height: 150px;
+    height: calc(100% - 42px) !important;
+    overflow-y: auto;
+  }
+
+  .ql-container {
+    height: calc(100% - 42px) !important;
+  }
+
+  .quill {
+    height: 100%;
+  }
+`;
 
 export default AddArticle;

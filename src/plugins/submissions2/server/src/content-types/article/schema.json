@@ -40,7 +40,7 @@
     "author": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::author.author",
+      "target": "plugin::users-permissions.user",
       "inversedBy": "articles"
     },
     "category": {
@@ -67,7 +67,7 @@
     "approvedBy": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::author.author",
+      "target": "plugin::users-permissions.user",
       "description": "The user who approved the submission"
     },
     "approvalDate": {

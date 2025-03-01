@@ -11,7 +11,7 @@ import {
   Box,
   Modal,
   Button,
-  Loader
+  Loader,
 } from '@strapi/design-system';
 import { Upload, Cross, Trash, Plus, Pencil } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ const ContributorsPage = () => {
       setArticles(data);
     } catch (error) {
       console.log(error, 'error');
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -202,12 +202,8 @@ const ContributorsPage = () => {
               variant="success"
             >
               {actionLoading.id === article.id && actionLoading.type === 'submit' ? (
-              <Flex
-                justifyContent="center"
-                alignItems="center"
-                style={{ height: '15px' }}
-              >
-                <Loader style={{ width: 15, height: 15 }} />
+                <Flex justifyContent="center" alignItems="center" style={{ height: '15px' }}>
+                  <Loader style={{ width: 15, height: 15 }} />
                 </Flex>
               ) : (
                 <Upload />
@@ -220,13 +216,9 @@ const ContributorsPage = () => {
               variant="danger"
             >
               {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
-                <Flex
-                justifyContent="center"
-                alignItems="center"
-                style={{ height: '15px' }}
-              >
-                <Loader style={{ width: 15, height: 15 }} />
-              </Flex>
+                <Flex justifyContent="center" alignItems="center" style={{ height: '15px' }}>
+                  <Loader style={{ width: 15, height: 15 }} />
+                </Flex>
               ) : (
                 <Trash />
               )}
@@ -255,13 +247,9 @@ const ContributorsPage = () => {
               variant="danger"
             >
               {actionLoading.id === article.id && actionLoading.type === 'cancel' ? (
-                <Flex
-                justifyContent="center"
-                alignItems="center"
-                style={{ height: '15px' }}
-              >
-                <Loader style={{ width: 15, height: 15 }} />
-              </Flex>
+                <Flex justifyContent="center" alignItems="center" style={{ height: '15px' }}>
+                  <Loader style={{ width: 15, height: 15 }} />
+                </Flex>
               ) : (
                 <Cross />
               )}
@@ -276,15 +264,11 @@ const ContributorsPage = () => {
               label="Delete"
               variant="danger"
             >
-            {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
-              <Flex
-                justifyContent="center"
-                alignItems="center"
-                style={{ height: '15px' }}
-              >
-                <Loader style={{ width: 15, height: 15 }} />
-              </Flex>)
-              : (
+              {actionLoading.id === article.id && actionLoading.type === 'delete' ? (
+                <Flex justifyContent="center" alignItems="center" style={{ height: '15px' }}>
+                  <Loader style={{ width: 15, height: 15 }} />
+                </Flex>
+              ) : (
                 <>
                   <Trash />
                 </>
@@ -344,7 +328,13 @@ const ContributorsPage = () => {
             </Thead>
             <Tbody>
               {articles.map((article: Article) => (
-                <Tr key={article.id}>
+                <Tr
+                  key={article.id}
+                  onClick={() =>
+                    navigate(`/plugins/submissions2/contributors/article/${article.id}`)
+                  }
+                  cursor="pointer"
+                >
                   <Td>
                     <Typography textColor="neutral800">{article.title}</Typography>
                   </Td>
@@ -404,14 +394,15 @@ const ContributorsPage = () => {
             <Modal.Close>
               <Button variant="tertiary">Cancel</Button>
             </Modal.Close>
-            <Button variant="danger" onClick={confirmDelete} disabled={actionLoading.id && actionLoading.type === 'delete'} >
-            {actionLoading.id && actionLoading.type === 'delete' ? (
+            <Button
+              variant="danger"
+              onClick={confirmDelete}
+              disabled={actionLoading.id && actionLoading.type === 'delete'}
+            >
+              {actionLoading.id && actionLoading.type === 'delete' ? (
                 <Loader style={{ width: 15, height: 15 }} />
-              )
-              : (
-                <>
-                  Confirm
-                </>
+              ) : (
+                <>Confirm</>
               )}
             </Button>
           </Modal.Footer>

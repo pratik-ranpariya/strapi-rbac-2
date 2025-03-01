@@ -12,20 +12,10 @@ const contributerService = ({ strapi }: { strapi: Core.Strapi }) => {
   const getAllContributersArticles = async (query) => {
     const articles = await strapi.entityService.findMany('plugin::submissions2.article', {
       ...query,
-      populate: {
-        author: { populate: ['avatar'] }, // Fetch author with avatar
-        category: true,
-        cover: true,
-      },
+      populate: ['author', 'category', 'cover', 'approvedBy'],
     });
     // Transform the response
-    return articles.map((article) => ({
-      ...article,
-      author: {
-        ...article.author,
-        avatar: article.author?.avatar?.formats?.thumbnail?.url || null, // Extract thumbnail URL
-      },
-    }));
+    return articles;
   };
 
   // Create a new article submission

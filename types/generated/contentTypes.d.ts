@@ -759,8 +759,14 @@ export interface PluginSubmissions2Article extends Struct.CollectionTypeSchema {
   attributes: {
     approvalComments: Schema.Attribute.Text;
     approvalDate: Schema.Attribute.Date;
-    approvedBy: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
-    author: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
+    approvedBy: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    author: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     blocks: Schema.Attribute.DynamicZone<
       ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
     >;

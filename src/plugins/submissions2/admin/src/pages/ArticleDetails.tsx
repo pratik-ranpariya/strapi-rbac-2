@@ -68,9 +68,9 @@ const ArticleDetails = () => {
         <Typography variant="p" marginBottom={2} marginTop={5}>
           <div dangerouslySetInnerHTML={{ __html: article.description }} />
         </Typography>
-        <Typography variant="sigma" marginBottom={1}>
+        {/* <Typography variant="sigma" marginBottom={1}>
           <strong>Author:</strong> {article.author.name}
-        </Typography>
+        </Typography> */}
         <Typography variant="sigma" marginBottom={1}>
           <strong>Category:</strong> {article.category.name}
         </Typography>

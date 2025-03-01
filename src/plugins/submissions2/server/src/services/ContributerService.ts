@@ -28,7 +28,7 @@ const contributerService = ({ strapi }: { strapi: Core.Strapi }) => {
   // Get a specific article by ID
   const getArticleById = async (id) => {
     return await strapi.entityService.findOne('plugin::submissions2.article', id, {
-      populate: ['author', 'category', 'cover'],
+      populate: ['author', 'category', 'cover', 'approvedBy'],
     });
   };
 
@@ -44,6 +44,14 @@ const contributerService = ({ strapi }: { strapi: Core.Strapi }) => {
     return await strapi.entityService.delete('plugin::submissions2.article', id);
   };
 
+  // Get articles by category ID
+  const getArticlesByCategoryId = async (id) => {
+    return await strapi.entityService.findMany('plugin::submissions2.article', {
+      filters: { category: id },
+      populate: ['author', 'category', 'cover', 'approvedBy'],
+    });
+  };
+
   return {
     getContributersArticles,
     getAllContributersArticles,
@@ -51,6 +59,7 @@ const contributerService = ({ strapi }: { strapi: Core.Strapi }) => {
     getArticleById,
     updateArticle,
     deleteArticle,
+    getArticlesByCategoryId,
   };
 };
 

@@ -11,7 +11,7 @@ import {
   Loader,
 } from '@strapi/design-system';
 import { Check, Cross } from '@strapi/icons';
-import TooltipIconButton from '../TooltipIconButton';
+import TooltipIconButton from '../Icons/TooltipIconButton';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

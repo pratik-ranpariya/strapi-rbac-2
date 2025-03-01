@@ -62,7 +62,7 @@ const ResizeHandle = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.colors.neutral400};
-  
+
   &:hover {
     color: ${({ theme }) => theme.colors.neutral600};
   }
@@ -75,6 +75,8 @@ const AddArticle = () => {
   const [category, setCategory] = useState('');
   const [authors, setAuthors] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [contributorUsers, setContributorUsers] = useState([]);
+  const [editorUsers, setEditorUsers] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [editorHeight, setEditorHeight] = useState(200);
@@ -108,21 +110,21 @@ const AddArticle = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     const startY = e.pageY;
     const startHeight = editorHeight;
-    
+
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaY = moveEvent.pageY - startY;
       const newHeight = Math.max(200, startHeight + deltaY); // Minimum height of 200px
       setEditorHeight(newHeight);
     };
-    
+
     const handleMouseUp = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-    
+
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
@@ -140,13 +142,18 @@ const AddArticle = () => {
           Authorization: `Bearer ${token}`,
         };
 
-        const [authorsResponse, categoriesResponse] = await Promise.all([
-          fetch('/submissions2/authors', { method: 'GET', headers }),
-          fetch('/submissions2/categories', { method: 'GET', headers }),
-        ]);
+        const [authorsResponse, categoriesResponse, contributorUsersResponse, editorUsersResponse] =
+          await Promise.all([
+            fetch('/submissions2/authors', { method: 'GET', headers }),
+            fetch('/submissions2/categories', { method: 'GET', headers }),
+            fetch('/submissions2/contributor-users', { method: 'GET', headers }),
+            fetch('/submissions2/editor-users', { method: 'GET', headers }),
+          ]);
 
         setAuthors(await authorsResponse.json());
         setCategories(await categoriesResponse.json());
+        setContributorUsers(await contributorUsersResponse.json());
+        setEditorUsers(await editorUsersResponse.json());
       } catch (error) {
         console.error('Error fetching authors or categories:', error);
       }
@@ -154,6 +161,9 @@ const AddArticle = () => {
 
     fetchAuthorsAndCategories();
   }, []);
+
+  console.log('contributorUsers', contributorUsers);
+  console.log('editorUsers', editorUsers);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,

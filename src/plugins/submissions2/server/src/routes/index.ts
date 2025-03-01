@@ -119,4 +119,31 @@ export default [
       auth: false,
     },
   },
+  {
+    method: 'GET',
+    path: '/getArticlesByCategoryId/:id',
+    handler: 'contributer.getArticlesByCategoryId',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/contributor-users',
+    handler: 'controller.getContributorUsers',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/editor-users',
+    handler: 'controller.getEditorUsers',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
 ];

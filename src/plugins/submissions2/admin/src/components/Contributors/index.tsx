@@ -15,7 +15,7 @@ import {
 } from '@strapi/design-system';
 import { Upload, Cross, Trash, Plus, Pencil } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
-import TooltipIconButton from '../TooltipIconButton';
+import TooltipIconButton from '../Icons/TooltipIconButton';
 import { LinkButton } from '@strapi/design-system';
 import LoaderComponent from '../LoaderComponent';
 

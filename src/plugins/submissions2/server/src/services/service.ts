@@ -27,6 +27,22 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
       return console.log('Error fetching users', error);
     }
   },
+
+  async getAllContributorUsers(ctx: any) {
+    return await strapi.entityService.findMany('plugin::users-permissions.user', {
+      filters: {
+        role: 'contributor',
+      },
+    });
+  },
+
+  async getAllEditorUsers(ctx: any) {
+    return await strapi.entityService.findMany('plugin::users-permissions.user', {
+      filters: {
+        role: 'editor',
+      },
+    });
+  },
 });
 
 export default service;

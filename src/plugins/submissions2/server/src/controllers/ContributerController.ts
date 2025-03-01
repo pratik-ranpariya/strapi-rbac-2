@@ -109,6 +109,16 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
       .service('contributerService')
       .updateArticle(id, { title, description, author, category, cover, submissionStatus });
   };
+
+  const getArticlesByCategoryId = async (ctx) => {
+    const { id } = ctx.params;
+    const articles = await strapi
+      .plugin('submissions2')
+      .service('contributerService')
+      .getArticlesByCategoryId(id);
+    ctx.body = articles;
+  };
+
   return {
     index,
     find,
@@ -119,6 +129,7 @@ const contributerController = ({ strapi }: { strapi: Core.Strapi }) => {
     deleteSubmission,
     updateSubmission,
     editSubmission,
+    getArticlesByCategoryId,
   };
 };
 

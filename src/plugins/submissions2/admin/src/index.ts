@@ -1,8 +1,8 @@
 import { PLUGIN_ID } from './pluginId';
 import { Initializer } from './components/Initializer';
-import { PluginIcon } from './components/PluginIcon';
-import { AddArticleIcon } from './components/AddArticleIcon';
-import { UserIcon } from './components/UserIcon';
+import { PluginIcon } from './components/Icons/PluginIcon';
+import { AddArticleIcon } from './components/Icons/AddArticleIcon';
+import { UserIcon } from './components/Icons/UserIcon';
 
 export default {
   register(app: any) {

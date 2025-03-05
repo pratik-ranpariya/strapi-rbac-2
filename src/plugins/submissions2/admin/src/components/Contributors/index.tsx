@@ -13,7 +13,7 @@ import {
   Button,
   Loader,
 } from '@strapi/design-system';
-import { Upload, Cross, Trash, Plus, Pencil } from '@strapi/icons';
+import { Upload, Cross, Trash, Plus, Pencil, Eye } from '@strapi/icons';
 import { useNavigate } from 'react-router-dom';
 import TooltipIconButton from '../Icons/TooltipIconButton';
 import { LinkButton } from '@strapi/design-system';
@@ -196,6 +196,15 @@ const ContributorsPage = () => {
         return (
           <Flex gap={2}>
             <TooltipIconButton
+              onClick={() =>
+                navigate(`/plugins/submissions2/contributors/article/${article?.id}`)
+              }
+              label="View"
+              variant="warning"
+            >
+              <Eye />
+            </TooltipIconButton>
+            <TooltipIconButton
               onClick={() => handleSubmit(article.id)}
               disabled={actionLoading.id === article.id}
               label="Submit"
@@ -241,6 +250,15 @@ const ContributorsPage = () => {
         return (
           <Flex gap={2}>
             <TooltipIconButton
+              onClick={() =>
+                navigate(`/plugins/submissions2/contributors/article/${article?.id}`)
+              }
+              label="View"
+              variant="warning"
+            >
+              <Eye />
+            </TooltipIconButton>
+            <TooltipIconButton
               onClick={() => handleCancel(article.id)}
               disabled={actionLoading.id === article.id}
               label="Cancel"
@@ -260,6 +278,15 @@ const ContributorsPage = () => {
         return (
           <Flex gap={2}>
             <TooltipIconButton
+              onClick={() =>
+                navigate(`/plugins/submissions2/contributors/article/${article?.id}`)
+              }
+              label="View"
+              variant="warning"
+            >
+              <Eye />
+            </TooltipIconButton>
+            <TooltipIconButton
               onClick={() => handleDeleteConfirmation(article.id)}
               label="Delete"
               variant="danger"
@@ -277,7 +304,19 @@ const ContributorsPage = () => {
           </Flex>
         );
       default:
-        return null;
+        return (
+          <Flex gap={2}>
+            <TooltipIconButton
+              onClick={() =>
+                navigate(`/plugins/submissions2/contributors/article/${article?.id}`)
+              }
+              label="View"
+              variant="warning"
+            >
+              <Eye />
+            </TooltipIconButton>
+          </Flex>
+        );
     }
   };
 
@@ -329,27 +368,24 @@ const ContributorsPage = () => {
             <Tbody>
               {articles.map((article: Article) => (
                 <Tr
-                  key={article.id}
-                  onClick={() =>
-                    navigate(`/plugins/submissions2/contributors/article/${article.id}`)
-                  }
+                  key={article?.id}
                   cursor="pointer"
                 >
                   <Td>
-                    <Typography textColor="neutral800">{article.title}</Typography>
+                    <Typography textColor="neutral800">{article?.title}</Typography>
                   </Td>
                   <Td>
                     <Typography textColor="neutral800">
-                      {article.description.length > 50
-                        ? `${article.description.substring(0, 50)}...`
-                        : article.description}
+                      {article?.description?.length > 50
+                        ? `${article?.description?.substring(0, 50)}...`
+                        : article?.description}
                     </Typography>
                   </Td>
                   <Td>
-                    <Typography textColor="neutral800">{article.author.name}</Typography>
+                    <Typography textColor="neutral800">{article?.author?.name}</Typography>
                   </Td>
                   <Td>
-                    <Typography textColor="neutral800">{article.category.name}</Typography>
+                    <Typography textColor="neutral800">{article?.category?.name}</Typography>
                   </Td>
                   <Td>
                     <Typography
@@ -368,7 +404,7 @@ const ContributorsPage = () => {
                   </Td>
                   <Td>
                     <Typography textColor="neutral800">
-                      {new Date(article.createdAt).toLocaleDateString()}
+                      {new Date(article?.createdAt).toLocaleDateString()}
                     </Typography>
                   </Td>
                   <Td>

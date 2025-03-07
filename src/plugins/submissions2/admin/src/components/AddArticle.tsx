@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import {
@@ -16,6 +17,7 @@ import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles for the editor
 import { Drag } from '@strapi/icons';
+// import MyEditor from './MyEditor/MyEditor';
 
 const FormBox = styled(Box)`
   background: ${({ theme }) => theme.colors.neutral100};
@@ -210,6 +212,7 @@ const AddArticle = () => {
       <Typography variant="alpha" fontWeight="bold" marginBottom={10}>
         Add New Article
       </Typography>
+      {/* <MyEditor /> */}
       <FormBox background="neutral100">
         <form onSubmit={(e) => handleSubmit(e)}>
           <Box marginBottom={4} marginTop={5}>

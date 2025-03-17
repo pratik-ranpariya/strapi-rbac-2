@@ -13,10 +13,12 @@
     "dev": "strapi build && strapi develop --watch-admin"
   },
   "dependencies": {
+    "@sklinet/strapi-plugin-tinymce": "^1.1.6",
     "@strapi/helper-plugin": "^5.0.0-alpha.2",
     "@strapi/plugin-cloud": "5.8.1",
     "@strapi/plugin-users-permissions": "5.8.1",
     "@strapi/strapi": "5.8.1",
+    "@tinymce/tinymce-react": "^6.0.0",
     "axios": "^1.7.9",
     "fs-extra": "^10.0.0",
     "mime-types": "^2.1.27",

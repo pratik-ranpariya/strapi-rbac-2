@@ -1,10 +1,8 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   TextInput,
-  Textarea,
   Box,
   Typography,
   SingleSelect,
@@ -17,6 +15,9 @@ import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles for the editor
 import { Drag } from '@strapi/icons';
+import { Editor } from '@tinymce/tinymce-react';
+import MyEditor from './MyEditor/MyEditor';
+
 // import MyEditor from './MyEditor/MyEditor';
 
 const FormBox = styled(Box)`
@@ -72,7 +73,9 @@ const ResizeHandle = styled.div`
 
 const AddArticle = () => {
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState(' \n\n\n\n\n\n\n\n\n\n');
+  const [description, setDescription] = useState(
+    '<p>This is the initial content of the editor.</p>'
+  );
   const [author, setAuthor] = useState('');
   const [category, setCategory] = useState('');
   const [authors, setAuthors] = useState([]);
@@ -131,10 +134,6 @@ const AddArticle = () => {
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const editorStyle = {
-    height: `${editorHeight}px`,
-  };
-
   useEffect(() => {
     const fetchAuthorsAndCategories = async () => {
       try {
@@ -166,6 +165,7 @@ const AddArticle = () => {
 
   console.log('contributorUsers', contributorUsers);
   console.log('editorUsers', editorUsers);
+  console.log('description', description);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
@@ -207,6 +207,38 @@ const AddArticle = () => {
     }
   };
 
+  // Define toolbar and init variables
+  const editorToolbar =
+    'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help';
+
+  const editorInit = {
+    height: 500,
+    menubar: false,
+    plugins: [
+      'advlist',
+      'autolink',
+      'lists',
+      'link',
+      'image',
+      'charmap',
+      'preview',
+      'anchor',
+      'searchreplace',
+      'visualblocks',
+      'code',
+      'fullscreen',
+      'insertdatetime',
+      'media',
+      'table',
+      'code',
+      'help',
+      'wordcount',
+    ],
+    toolbar: editorToolbar,
+    content_style:
+      'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; direction: ltr; }',
+  };
+
   return (
     <Box padding={8} background="neutral100">
       <Typography variant="alpha" fontWeight="bold" marginBottom={10}>
@@ -225,59 +257,19 @@ const AddArticle = () => {
             />
             <FieldHint>A clear and descriptive title for your article</FieldHint>
           </Box>
-          {/* <Box marginBottom={4} marginTop={5}>
-            <FieldLabel>Cover Photo</FieldLabel>
-            <TextInput
-              type="file"
-              onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  // const token = sessionStorage.getItem('jwtToken');
-                  const formData = new FormData();
-                  formData.append('files', file);
 
-                  try {
-                    const headers = {
-                      Authorization: `Bearer ${token}`,
-                    };
-                    console.log('Headers:', headers); // Check if the headers are set correctly
-                    const response = await fetch('/upload', {
-                      method: 'POST',
-                      headers: headers,
-                      body: formData,
-                    });
-
-                    if (!response.ok) throw new Error('Failed to upload image');
-                    const data = await response.json();
-                    setCoverPhoto(data[0].url); // Assuming the response contains the uploaded file's URL
-                  } catch (error) {
-                    console.error('Error uploading image:', error);
-                  }
-                }
-              }}
-              required
-            />
-            <FieldHint>A Cover image for your article</FieldHint>
-          </Box> */}
           <Box marginBottom={4}>
             <FieldLabel>Description</FieldLabel>
-            <EditorWrapper style={editorStyle}>
-              <ReactQuill
-                value={description}
-                onChange={(value: string) => setDescription(value)}
-                modules={modules}
-                placeholder="Write a detailed description of your article..."
-                bounds={'.editor-container'}
-                formats={formats}
-                theme="snow"
-                style={{ height: '100%' }}
-              />
-              <ResizeHandle onMouseDown={handleMouseDown}>
-                <Drag width="12px" />
-              </ResizeHandle>
-            </EditorWrapper>
+            {/* <Editor
+              apiKey="n15ae8d2re2q2wq4zlssiym24dwkwil12srmdq7c3e4nr073"
+              initialValue={description}
+              onEditorChange={(content) => setDescription(content)}
+              init={editorInit}
+            /> */}
+            <MyEditor description={description} setDescription={setDescription} />
             <FieldHint>Provide a comprehensive description of your article's content</FieldHint>
           </Box>
+
           <Box marginBottom={4}>
             <FieldLabel>Author</FieldLabel>
             <SingleSelect

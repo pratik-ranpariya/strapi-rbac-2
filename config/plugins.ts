@@ -3,4 +3,7 @@ export default {
     enabled: true,
     resolve: "src/plugins/submissions2",
   },
+  tinymce: {
+    enabled: true,
+  },
 };

@@ -20,10 +20,8 @@ export default function MyEditor({
       <Editor
         apiKey="n15ae8d2re2q2wq4zlssiym24dwkwil12srmdq7c3e4nr073"
         onInit={(_evt: any, editor: any) => (editorRef.current = editor)}
-        initialValue={description}
-        // onEditorChange={(editorContent) => {
-        //   onchange({ target: { name: 'description', value: editorContent } });
-        // }}
+        value={description}
+        onEditorChange={(content) => setDescription(content)}
         init={{
           height: 500,
           menubar: false,
